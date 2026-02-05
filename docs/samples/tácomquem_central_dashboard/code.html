@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TáComQuem - Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Noto+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1b2531",
+                        "accent-amber": "#F59E0B",
+                        "accent-green": "#10B981",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "Noto Sans", "sans-serif"],
+                        "body": ["Noto Sans", "Inter", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-72 bg-surface-light dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full z-20 hidden lg:flex transition-colors duration-200">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-10">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M39.475 21.6262C40.358 21.4363 40.6863 21.5589 40.7581 21.5934C40.7876 21.655 40.8547 21.857 40.8082 22.3336C40.7408 23.0255 40.4502 24.0046 39.8572 25.2301C38.6799 27.6631 36.5085 30.6631 33.5858 33.5858C30.6631 36.5085 27.6632 38.6799 25.2301 39.8572C24.0046 40.4502 23.0255 40.7407 22.3336 40.8082C21.8571 40.8547 21.6551 40.7875 21.5934 40.7581C21.5589 40.6863 21.4363 40.358 21.6262 39.475C21.8562 38.4054 22.4689 36.9657 23.5038 35.2817C24.7575 33.2417 26.5497 30.9744 28.7621 28.762C30.9744 26.5497 33.2417 24.7574 35.2817 23.5037C36.9657 22.4689 38.4054 21.8562 39.475 21.6262ZM4.41189 29.2403L18.7597 43.5881C19.8813 44.7097 21.4027 44.9179 22.7217 44.7893C24.0585 44.659 25.5148 44.1631 26.9723 43.4579C29.9052 42.0387 33.2618 39.5667 36.4142 36.4142C39.5667 33.2618 42.0387 29.9052 43.4579 26.9723C44.1631 25.5148 44.659 24.0585 44.7893 22.7217C44.9179 21.4027 44.7097 19.8813 43.5881 18.7597L29.2403 4.41187C27.8527 3.02428 25.8765 3.02573 24.2861 3.36776C22.6081 3.72863 20.7334 4.58419 18.8396 5.74801C16.4978 7.18716 13.9881 9.18353 11.5858 11.5858C9.18354 13.988 7.18717 16.4978 5.74802 18.8396C4.58421 20.7334 3.72865 22.6081 3.36778 24.2861C3.02574 25.8765 3.02429 27.8527 4.41189 29.2403Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">TáComQuem</h2>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex gap-3 items-center p-2 rounded-xl bg-slate-100 dark:bg-slate-800/50">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-12 shadow-sm" data-alt="User profile picture of smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPY4ScpWObO67rIc_DHKT2f6rs520k9lsxK4dBshxE6SfCOxgN3i38LhLj3GFZs0SLVxYatdHPoW3ui1D6YtaAkOB7I5FNj8d40eeS4jf41J8vM4gwjSyCQRCVv4NbmGh-gBvlEwivmWXq3MK8FUfFcaOQ8W1uATRHzBitxbQFl4xZHAzd1cZwdqnA0g-vNQUX_6gvpycbnl3LM2SJxv9x36JR2RdOMkBzhJqpjN-qEVP2h4S7YpnXW39QFvvorJwQHlZJ37sm2q8");'></div>
+<div class="flex flex-col">
+<h1 class="text-sm font-bold leading-tight">Olá, Alex</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs">O que está com quem?</p>
+</div>
+</div>
+<div class="flex flex-col gap-1 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary dark:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined filled">dashboard</span>
+<span class="text-sm font-semibold">Visão Geral</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="text-sm font-medium">Bem-Estar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Meus Itens</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-medium">Histórico</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Amigos</span>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-auto p-6 border-t border-slate-200 dark:border-slate-800">
+<div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold uppercase tracking-wider text-slate-400">Status Ativo</span>
+<span class="flex size-2 rounded-full bg-accent-green"></span>
+</div>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">4 Itens</p>
+<p class="text-xs text-slate-500">atualmente emprestados</p>
+</div>
+<div class="flex items-center gap-3 px-4 py-4 mt-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Configurações</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-screen overflow-y-auto lg:ml-72 bg-background-light dark:bg-background-dark transition-colors duration-200">
+<!-- Top Header (Mobile/Tablet friendly mainly, but functional on desktop) -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between">
+<div class="flex items-center gap-4 lg:hidden">
+<button class="text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="text-lg font-bold">TáComQuem</span>
+</div>
+<div class="hidden lg:flex flex-1 max-w-md">
+<label class="relative flex w-full items-center">
+<span class="absolute left-4 text-slate-400 dark:text-slate-500 material-symbols-outlined">search</span>
+<input class="w-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-full py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder:text-slate-400 transition-all" placeholder="Buscar itens, amigos..." type="text"/>
+</label>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-900/30 text-green-700 dark:text-green-400">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="text-xs font-semibold">Biometria Ativa</span>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-surface-dark"></span>
+</button>
+<button class="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Registrar Empréstimo
+                    </button>
+</div>
+</header>
+<div class="p-6 md:p-10 max-w-7xl mx-auto w-full">
+<!-- Welcome & Stats Section -->
+<div class="mb-10">
+<h1 class="text-3xl font-display font-bold text-slate-900 dark:text-white mb-2">Central de Empréstimos</h1>
+<p class="text-slate-500 dark:text-slate-400">Gerencie seus itens compartilhados com tranquilidade.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Grid Area: Borrowed Items -->
+<div class="md:col-span-8 lg:col-span-9 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">outbox</span>
+                                Itens Emprestados
+                            </h2>
+<button class="text-sm font-medium text-primary hover:underline">Ver todos</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Card 1 -->
+<div class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute top-3 left-3 z-10 bg-accent-amber/90 backdrop-blur text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">timelapse</span>
+                                        Emprestado
+                                    </div>
+<div class="w-full h-full bg-center bg-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Black professional DSLR camera on a wooden table" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5uloJ9fKowaudmENP-QxnHkSEFyzixCmCxUSlB63m309hS-ULRN_igOHlTXv4pBFGBtcaz4kM_ltneGnDS6ci-zlNUOREIbjcSQHScv9KZfw3eXrNX9RkLyYstJ9vZWG-tFeyfoWI_ADKVoNttTGIWnBeRRniyifRqbvDlUFBShEtjTDb7_i9hlTGR0tEOO9NWLDRxFgcuvz9BOtR_Vf48xeFawqud88mF6nWF-Av8vwwJqobDIndwlvEbTvXYk8dCZQ4IVD1JTo");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<p class="text-xs font-medium opacity-90">Devolução esperada: 15 Out</p>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-1">
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Câmera DSLR Sony</h3>
+<div class="flex items-center gap-2 mt-2">
+<div class="size-6 rounded-full bg-cover bg-center border border-white dark:border-slate-600" data-alt="Portrait of a young man with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7EKa89F9B-IO51XcXAVNELaZmaeUgqzqEnN3m-B_vVI4SO19yGLTPV6Q_tS3wTGhhEbWoi1OuNsifnxihIE6CTzdF8tl1pqFVt_zjSMw1ikBp11XdDzyQ1Q1OsKCD5gQxH6Q_xRkUXmgORRdH-ve30xLKAMS8UmvYt4SbBo_L7X9_75ytNLzQDClJFHASdaSCBbg5jxPLpApwk8cszT4-AfGQJq4bebwyjJZhMd7JRGy_9t1DgwrgTqTH6gE1xVU74Om3Nc14iw8");'></div>
+<span class="text-sm text-slate-600 dark:text-slate-300">Com <span class="font-medium text-slate-900 dark:text-white">Lucas Silva</span></span>
+</div>
+</div>
+<div class="px-4 pb-4 mt-auto">
+<button class="w-full py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Solicitar Devolução</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute top-3 left-3 z-10 bg-accent-amber/90 backdrop-blur text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">timelapse</span>
+                                        Emprestado
+                                    </div>
+<div class="w-full h-full bg-center bg-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Red camping tent in a forest" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBaECVuqueNa6kr1vPgIfoEv3m6pLxxIoUaFKKGGI4OVJhwewPHEDkzdwh8PnMp2PkcGo40sFoVV22rq-pcERr6v1rW9rnoD5m1zbqELVedP_PutyflwuPLwxE80bIsubGJryDM-7UemQ4K8mhIwfVYLvvFggRb2dpW3kzi1MIdLWB6vLAvCPlBb99E46Li0TEw-kbLHTnNOyHKsnW1ok0azKAyG8zCs67dcyrwSJ8sleiHaxrJXW56fnN86AICHlZ3nthzAbNZvzE");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<p class="text-xs font-medium opacity-90">Devolução esperada: 20 Out</p>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-1">
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Barraca de Camping</h3>
+<div class="flex items-center gap-2 mt-2">
+<div class="size-6 rounded-full bg-cover bg-center border border-white dark:border-slate-600" data-alt="Portrait of a smiling woman" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuNIsm2Xsq3RSgXjTxYZI3dVXFCYnTs32q4HaZyC_7jXzbzrXPGxHCsBtKtLHaQ43InHtqkN7cHyB_FbQ435Qo11PTtB4_5lB4l6hohtTGH71IN1DEzQ-DBSdJ89BlbFVcijLu46n6t-_jy3XymPfdnOIyTwXbOG04MnGb1szKAY-PzOZo2JkcOywSI7YkRrtSVS6Lb1ULQ1cis6_TC8foAe7QSMR1os9Y-lbUIJD1_W_Y9aOrq2EQPyAaIyfhDav0QPgiNzPe0JM");'></div>
+<span class="text-sm text-slate-600 dark:text-slate-300">Com <span class="font-medium text-slate-900 dark:text-white">Mariana Costa</span></span>
+</div>
+</div>
+<div class="px-4 pb-4 mt-auto">
+<button class="w-full py-2 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Solicitar Devolução</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute top-3 left-3 z-10 bg-accent-green/90 backdrop-blur text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                        Devolvido
+                                    </div>
+<div class="w-full h-full bg-center bg-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="Power drill tool on a workbench" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDs9Ygs9nba68oMcCd6_EyPZec9OgeJ2RR6mfghLE3SKVP_pKnlCwbTAUsvaJPEhje0X1f11Gqpp0c1bK33e1XrGU70K3En2Ozkr4UECoDZ8bKWHMicUG3yHXNYIhi3f8wbZlMXSDqIFe3dKqhkp91b5bV7IkUfJcZ-wUPZFn8w47lUa4kKt2Z0DCiCR9WP_xTQWQnwhOWxm9hNcd8a2HK74rcDjoALLZfYi8t0YsT3lTVGxuqJ32HBbhc8tUlbWYiH5rouR5u3Zzg");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+<div class="absolute bottom-3 left-3 text-white">
+<p class="text-xs font-medium opacity-90">Devolvido ontem</p>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-1">
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Furadeira Bosch</h3>
+<div class="flex items-center gap-2 mt-2">
+<div class="size-6 rounded-full bg-cover bg-center border border-white dark:border-slate-600" data-alt="Portrait of a man with beard" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFMPbvs2ZiCnV5J9NZr2lWlaeYocEoWEh_1uJyeixd8F7pOi3s_vcO8zZ88yECoteIQNu6nwwMUREM46VLfmpKrol0fTPrAEe6hssCtCuienFyElkI6PuZAR38O7I9g8KyDbq8_i-SgSWBRzj4BS6s0bR2iCt0ErRjQrPln_hrs_-P0MhI997uq5FNxwlGfnnmO4mjuMxyy2SVux7eF-TTCGMXqFaPQQ9LN6V-6AgetPGw2UfwGXuNTwzzeAxVHS8Nbd42QMFSeew");'></div>
+<span class="text-sm text-slate-600 dark:text-slate-300">Estava com <span class="font-medium text-slate-900 dark:text-white">Pedro Santos</span></span>
+</div>
+</div>
+<div class="px-4 pb-4 mt-auto">
+<button class="w-full py-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-xs font-bold hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">Avaliar Estado</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Widgets Area -->
+<div class="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+<!-- Wellness Check-in -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl p-5 border border-slate-100 dark:border-slate-700/50 shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</div>
+<h3 class="font-bold text-slate-900 dark:text-white">Check-in Social</h3>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                                Emprestar itens fortalece laços, mas pode causar ansiedade. Como você se sente sobre o empréstimo da Câmera?
+                            </p>
+<div class="flex justify-between gap-2">
+<button class="flex-1 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors text-2xl" title="Tranquilo">😄</button>
+<button class="flex-1 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors text-2xl" title="Neutro">😐</button>
+<button class="flex-1 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors text-2xl" title="Preocupado">😰</button>
+</div>
+</div>
+<!-- Active Items Summary List -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl p-5 border border-slate-100 dark:border-slate-700/50 shadow-sm flex-1">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-slate-900 dark:text-white">Atividade Recente</h3>
+</div>
+<div class="flex flex-col gap-4 relative">
+<!-- Timeline Line -->
+<div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-100 dark:bg-slate-700"></div>
+<!-- Item 1 -->
+<div class="flex gap-4 relative">
+<div class="size-10 rounded-full bg-blue-50 dark:bg-blue-900/20 border-2 border-white dark:border-surface-dark z-10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">handshake</span>
+</div>
+<div class="flex flex-col py-0.5">
+<p class="text-sm font-medium text-slate-900 dark:text-white">Jogo de Tabuleiro</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Emprestado para <span class="text-slate-700 dark:text-slate-300">Ana</span></p>
+<span class="text-[10px] text-slate-400 mt-1">Há 2 horas</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-4 relative">
+<div class="size-10 rounded-full bg-green-50 dark:bg-green-900/20 border-2 border-white dark:border-surface-dark z-10 flex items-center justify-center text-green-600 shrink-0">
+<span class="material-symbols-outlined text-[20px]">assignment_returned</span>
+</div>
+<div class="flex flex-col py-0.5">
+<p class="text-sm font-medium text-slate-900 dark:text-white">Mala de Viagem</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Devolvida por <span class="text-slate-700 dark:text-slate-300">Carlos</span></p>
+<span class="text-[10px] text-slate-400 mt-1">Ontem</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex gap-4 relative">
+<div class="size-10 rounded-full bg-amber-50 dark:bg-amber-900/20 border-2 border-white dark:border-surface-dark z-10 flex items-center justify-center text-amber-600 shrink-0">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+</div>
+<div class="flex flex-col py-0.5">
+<p class="text-sm font-medium text-slate-900 dark:text-white">Lembrete enviado</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Para <span class="text-slate-700 dark:text-slate-300">Lucas</span> (Câmera)</p>
+<span class="text-[10px] text-slate-400 mt-1">Há 3 dias</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors">Ver histórico completo</button>
+</div>
+</div>
+</div>
+</div>
+<!-- FAB for mobile only -->
+<div class="fixed bottom-6 right-6 lg:hidden z-30">
+<button class="flex items-center justify-center size-14 rounded-full bg-primary text-white shadow-xl shadow-primary/30 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+</div>
+</main>
+</div>
+</body></html>
