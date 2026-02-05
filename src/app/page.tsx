@@ -9,8 +9,8 @@ export default function HomePage() {
           TáComQuem
         </h1>
         <p className="text-xl text-muted-foreground mb-8">
-          Nunca mais esqueça quem está com suas coisas.
-          Gerencie empréstimos entre amigos de forma simples.
+          Nunca mais esqueça quem está com suas coisas. Gerencie empréstimos
+          entre amigos de forma simples.
         </p>
         <div className="flex gap-4 justify-center">
           <Button asChild size="lg">

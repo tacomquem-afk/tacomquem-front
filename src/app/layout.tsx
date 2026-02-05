@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans } from "next/font/google";
-import { AuthProvider } from "@/providers/auth-provider";
-import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentUser } from "@/lib/api/auth";
+import { AuthProvider } from "@/providers/auth-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const inter = Inter({

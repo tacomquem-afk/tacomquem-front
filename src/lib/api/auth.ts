@@ -1,6 +1,6 @@
 import { cache } from "react";
+import type { LoginResponse, RegisterResponse, User } from "@/types";
 import { api } from "./client";
-import type { User, LoginResponse, RegisterResponse } from "@/types";
 
 export const getCurrentUser = cache(async (): Promise<User | null> => {
   try {

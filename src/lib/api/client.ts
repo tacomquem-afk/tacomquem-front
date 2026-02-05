@@ -1,5 +1,4 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5173";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5173";
 
 type RequestConfig = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -89,10 +88,7 @@ class ApiClient {
     }
   }
 
-  async request<T>(
-    endpoint: string,
-    config: RequestConfig = {}
-  ): Promise<T> {
+  async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
     const {
       method = "GET",
       body,
@@ -174,10 +170,7 @@ class ApiClient {
     return this.request<T>(endpoint, { ...config, method: "PATCH", body });
   }
 
-  delete<T>(
-    endpoint: string,
-    config?: Omit<RequestConfig, "method" | "body">
-  ) {
+  delete<T>(endpoint: string, config?: Omit<RequestConfig, "method" | "body">) {
     return this.request<T>(endpoint, { ...config, method: "DELETE" });
   }
 }
