@@ -1163,102 +1163,88 @@ git commit -m "feat: add landing page"
 
 ---
 
-## Fase 8: ESLint e Prettier
+## Fase 8: Biome
 
-### Task 8.1: Configurar ESLint
-
-**Files:**
-- Modify: `eslint.config.mjs`
-
-**Step 1: Instalar dependências**
-
-```bash
-bun add -d eslint-config-prettier
-```
-
-**Step 2: Atualizar eslint.config.mjs**
-
-```javascript
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
-  {
-    rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      "react/jsx-no-leaked-render": ["error", { validStrategies: ["ternary"] }],
-    },
-  },
-];
-
-export default eslintConfig;
-```
-
-**Step 3: Commit**
-
-```bash
-git add eslint.config.mjs package.json bun.lockb
-git commit -m "chore: configure eslint with prettier"
-```
-
----
-
-### Task 8.2: Configurar Prettier
+### Task 8.1: Instalar e configurar Biome
 
 **Files:**
-- Create: `.prettierrc`
-- Create: `.prettierignore`
+- Create: `biome.json`
+- Modify: `package.json`
 
-**Step 1: Instalar Prettier e plugin Tailwind**
+**Step 1: Instalar Biome**
 
 ```bash
-bun add -d prettier prettier-plugin-tailwindcss
+bun add -d @biomejs/biome
 ```
 
-**Step 2: Criar .prettierrc**
+**Step 2: Criar biome.json**
 
 ```json
 {
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": false,
-  "printWidth": 80,
-  "tabWidth": 2,
-  "useTabs": false,
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useNamingConvention": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "trailingComma": "es5",
+    "singleQuote": false,
+    "bracketSpacing": true
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "typescript": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "trailingCommas": "none"
+    }
+  },
+  "ignore": [
+    "node_modules",
+    ".next",
+    "dist",
+    "bun.lockb",
+    "build"
+  ]
 }
 ```
 
-**Step 3: Criar .prettierignore**
-
-```
-node_modules
-.next
-dist
-bun.lockb
-```
-
-**Step 4: Adicionar script de formatação ao package.json**
+**Step 3: Adicionar scripts ao package.json**
 
 Adicionar no `scripts`:
 ```json
-"format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+"lint": "biome lint src/",
+"format": "biome format --write src/",
+"check": "biome check --write src/"
 ```
 
-**Step 5: Commit**
+**Step 4: Commit**
 
 ```bash
-git add .prettierrc .prettierignore package.json bun.lockb
-git commit -m "chore: configure prettier"
+git add biome.json package.json bun.lockb
+git commit -m "chore: install and configure biome for linting and formatting"
 ```
 
 ---
