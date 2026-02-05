@@ -55,7 +55,7 @@ export function useReturnLoan() {
 
       return { previousLoans }
     },
-    onError: (err, loanId, context) => {
+    onError: (_err, _loanId, context) => {
       // Rollback on error
       queryClient.setQueryData(['loans'], context?.previousLoans)
     },

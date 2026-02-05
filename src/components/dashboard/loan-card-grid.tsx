@@ -2,6 +2,12 @@ import { LoanCard } from './loan-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLoans } from '@/hooks/use-loans'
 import { Package } from 'lucide-react'
+import type { Loan, Item, User } from '@/types'
+
+type PopulatedLoan = Loan & {
+  item: Pick<Item, 'name' | 'images'>
+  borrower: Pick<User, 'name' | 'avatarUrl'>
+}
 
 export function LoanCardGrid() {
   const { data: loans, isLoading } = useLoans('lent')
@@ -33,12 +39,10 @@ export function LoanCardGrid() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {loans.map((loan, index) => (
+      {loans.map((loan) => (
         <LoanCard
           key={loan.id}
-          loan={loan as any} // TODO: fix types
-          // Staggered animation delay
-          style={{ animationDelay: `${index * 50}ms` } as any}
+          loan={loan as PopulatedLoan}
         />
       ))}
     </div>
