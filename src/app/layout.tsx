@@ -27,6 +27,11 @@ export const metadata: Metadata = {
   description:
     "Plataforma de empréstimos de itens pessoais entre amigos. Empreste e pegue emprestado com confiança.",
   keywords: ["empréstimo", "amigos", "compartilhamento", "itens"],
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export const viewport: Viewport = {

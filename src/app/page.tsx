@@ -1,6 +1,7 @@
-import { Check, Clock, Link as LinkIcon, Shield, Zap } from "lucide-react";
+import { Check, Clock, Link as LinkIcon, Shield, Zap, Lock, Camera, Bell, History } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -15,26 +16,26 @@ export default function HomePage() {
       {/* Navbar */}
       <header className="absolute top-0 w-full z-50">
         <div className="container mx-auto px-6 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="size-8 text-[#2b8cee]">
               <svg
-                fill="none"
-                viewBox="0 0 48 48"
+                viewBox="0 0 512 512"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-full h-full"
                 role="img"
                 aria-label="TáComQuem Logo"
+                fill="none"
               >
-                <path
-                  d="M4 4H17.3334V17.3333H30.6666V30.6667H44V44H4Z"
-                  fill="currentColor"
-                />
+                <circle cx="256" cy="256" r="60" fill="currentColor" />
+                <path d="M 362 150 A 150 150 0 1 0 150 362" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 150 362 L 190 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 190 322 L 190 392 M 190 322 L 120 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <span className="text-xl font-bold tracking-tight text-white">
               TáComQuem
             </span>
-          </div>
+          </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
             <Link
               href="#como-funciona"
@@ -394,23 +395,41 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">
             Tudo o que você precisa
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:max-w-5xl lg:mx-auto gap-6">
             {[
-              { icon: "📸", label: "Fotos do Item" },
-              { icon: "🔗", label: "Link Seguro" },
-              { icon: "⏰", label: "Prazos" },
-              { icon: "🔔", label: "Lembretes" },
-              { icon: "👥", label: "Histórico" },
-              { icon: "📊", label: "Dashboard" },
-              { icon: "📱", label: "Mobile First" },
-              { icon: "🔒", label: "Privacidade" },
+              {
+                icon: <Camera className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Fotos do Item",
+              },
+              {
+                icon: <LinkIcon className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Link Seguro",
+              },
+              {
+                icon: <Clock className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Prazos",
+              },
+              {
+                icon: <Bell className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Lembretes",
+              },
+              {
+                icon: <History className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Histórico",
+              },
+              {
+                icon: <Lock className="w-10 h-10 text-[#2b8cee]" />,
+                label: "Privacidade",
+              },
             ].map((feature) => (
               <div
                 key={feature.label}
                 className="bg-[#101922] p-6 rounded-xl border border-slate-700/50 flex flex-col items-center justify-center text-center gap-3 hover:bg-[#2b8cee]/10 transition-colors cursor-default"
               >
-                <span className="text-3xl">{feature.icon}</span>
-                <span className="font-semibold text-sm md:text-base">
+                <div className="flex items-center justify-center h-14 w-14">
+                  {feature.icon}
+                </div>
+                <span className="font-semibold text-sm md:text-base text-slate-200">
                   {feature.label}
                 </span>
               </div>
@@ -484,24 +503,24 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-[#101922] border-t border-slate-800 py-12">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
+          <Link href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="size-6 text-[#2b8cee]">
               <svg
-                fill="none"
-                viewBox="0 0 48 48"
+                viewBox="0 0 512 512"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-full h-full"
                 role="img"
                 aria-label="TáComQuem Logo"
+                fill="none"
               >
-                <path
-                  d="M4 4H17.3334V17.3333H30.6666V30.6667H44V44H4Z"
-                  fill="currentColor"
-                />
+                <circle cx="256" cy="256" r="60" fill="currentColor" />
+                <path d="M 362 150 A 150 150 0 1 0 150 362" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 150 362 L 190 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 190 322 L 190 392 M 190 322 L 120 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <span className="font-bold text-lg text-white">TáComQuem</span>
-          </div>
+          </Link>
           <p className="text-slate-500 text-sm">
             © 2026 TáComQuem. Todos os direitos reservados.
           </p>
