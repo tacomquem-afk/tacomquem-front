@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Public Pages", () => {
   test("should load home page", async ({ page }) => {
     await page.goto("/");
-    expect(page.url()).toBe("http://localhost:3000/");
+    expect(page.url()).toBe("http://localhost:3001/");
     await expect(page.locator("h1")).toContainText(/TáComQuem/);
   });
 
