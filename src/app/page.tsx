@@ -1,7 +1,16 @@
-import { Check, Clock, Link as LinkIcon, Shield, Zap, Lock, Camera, Bell, History } from "lucide-react";
+import {
+  Bell,
+  Camera,
+  Check,
+  Clock,
+  History,
+  Link as LinkIcon,
+  Lock,
+  Shield,
+  Zap,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -15,9 +24,12 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col bg-[#101922] text-white overflow-x-hidden font-sans selection:bg-[#2b8cee] selection:text-white">
       {/* Navbar */}
       <header className="absolute top-0 w-full z-50">
-        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
-          <Link href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="size-8 text-[#2b8cee]">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center justify-between">
+          <Link
+            href="#"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="size-7 md:size-8 text-[#2b8cee]">
               <svg
                 viewBox="0 0 512 512"
                 xmlns="http://www.w3.org/2000/svg"
@@ -27,12 +39,30 @@ export default function HomePage() {
                 fill="none"
               >
                 <circle cx="256" cy="256" r="60" fill="currentColor" />
-                <path d="M 362 150 A 150 150 0 1 0 150 362" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 150 362 L 190 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 190 322 L 190 392 M 190 322 L 120 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M 362 150 A 150 150 0 1 0 150 362"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M 150 362 L 190 322"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M 190 322 L 190 392 M 190 322 L 120 322"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
-            <span className="text-xl font-bold tracking-tight text-white">
+            <span className="text-lg md:text-xl font-bold tracking-tight text-white whitespace-nowrap">
               TáComQuem
             </span>
           </Link>
@@ -53,16 +83,16 @@ export default function HomePage() {
               Entrar
             </Link>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <Link
               href="/login"
-              className="md:hidden text-sm font-medium text-slate-300 hover:text-white"
+              className="md:hidden text-xs md:text-sm font-medium text-slate-300 hover:text-white whitespace-nowrap"
             >
               Entrar
             </Link>
             <Button
               asChild
-              className="rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
+              className="rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold px-4 md:px-6 py-1 md:py-2 text-[10px] sm:text-xs md:text-base shadow-lg shadow-blue-500/20 transition-all hover:scale-105 h-9 md:h-10"
             >
               <Link href="/register">Começar Grátis</Link>
             </Button>
@@ -71,32 +101,31 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        {/* Background Gradients */}
+      <section className="relative pt-24 pb-16 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[#2b8cee]/20 rounded-full blur-[120px] -z-10 pointer-events-none mix-blend-screen" />
         <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
 
-        <div className="container mx-auto px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2b8cee]/10 border border-[#2b8cee]/20 text-[#2b8cee] text-xs font-bold uppercase tracking-wider mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="container mx-auto px-4 md:px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2b8cee]/10 border border-[#2b8cee]/20 text-[#2b8cee] text-[10px] md:text-xs font-bold uppercase tracking-wider mb-6 md:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2b8cee] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2b8cee]"></span>
             </span>
             Novo Jeito de Emprestar
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-[1.2] md:leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
             TáComQuem: Nunca mais perca o controle dos seus{" "}
             <span className="text-[#2b8cee]">empréstimos</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <p className="text-base md:text-xl text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             Saiba exatamente quem está com seus itens — e quando eles voltam.
             Simples, rápido e sem constrangimentos.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 md:mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-14 px-8 text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
+              className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-12 md:h-14 px-8 text-base md:text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
             >
               <Link href="/register">👉 Começar agora</Link>
             </Button>
@@ -104,7 +133,7 @@ export default function HomePage() {
               asChild
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto rounded-full border-slate-700 bg-transparent text-white hover:bg-slate-800 hover:text-white font-medium h-14 px-8 text-lg transition-all"
+              className="w-full sm:w-auto rounded-full border-slate-700 bg-transparent text-white hover:bg-slate-800 hover:text-white font-medium h-12 md:h-14 px-8 text-base md:text-lg transition-all"
             >
               <Link href="#como-funciona">Ver como funciona</Link>
             </Button>
@@ -113,7 +142,6 @@ export default function HomePage() {
           {/* Mockup Replication */}
           <div className="relative mx-auto max-w-5xl [perspective:1000px] animate-in fade-in zoom-in duration-1000 delay-500">
             <div className="relative z-10 bg-[#1b2531] rounded-3xl border border-slate-700/50 shadow-2xl shadow-black/50 overflow-hidden [transform:rotateX(5deg)] hover:[transform:rotateX(0deg)] transition-transform duration-700 ease-out border-t-white/10">
-              {/* Fake Browser Header */}
               <div className="h-12 border-b border-slate-700/50 bg-[#101922]/50 backdrop-blur flex items-center px-4 gap-2">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -125,7 +153,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Dashboard Content Recreation */}
               <div className="p-6 md:p-10 bg-[#101922] text-left">
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-2">
@@ -158,7 +185,6 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {/* Card 1 */}
                   <div className="group relative flex flex-col bg-[#1b2531] rounded-2xl overflow-hidden border border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="relative h-40 w-full overflow-hidden">
                       <div className="absolute top-3 left-3 z-10 bg-[#F59E0B]/90 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
@@ -198,7 +224,6 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Card 2 */}
                   <div className="group relative flex flex-col bg-[#1b2531] rounded-2xl overflow-hidden border border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="relative h-40 w-full overflow-hidden">
                       <div className="absolute top-3 left-3 z-10 bg-[#10B981]/90 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
@@ -233,7 +258,6 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Card 3 */}
                   <div className="group relative flex flex-col bg-[#1b2531] rounded-2xl overflow-hidden border border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="relative h-40 w-full overflow-hidden">
                       <div className="absolute top-3 left-3 z-10 bg-[#F59E0B]/90 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
@@ -277,7 +301,6 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            {/* Glow under mockup */}
             <div className="absolute -bottom-10 left-10 md:left-20 right-10 md:right-20 h-20 bg-[#2b8cee] blur-[80px] opacity-40 -z-10 rounded-full"></div>
           </div>
         </div>
@@ -285,7 +308,7 @@ export default function HomePage() {
 
       {/* Problem Section */}
       <section className="py-24 bg-[#1b2531]">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-5xl font-bold leading-tight">
@@ -317,24 +340,24 @@ export default function HomePage() {
               </ul>
             </div>
             <div className="relative">
-              <div className="bg-[#101922] p-8 rounded-2xl border border-slate-700/50 shadow-xl relative z-10">
-                <div className="flex gap-4 items-start mb-6">
-                  <div className="size-10 rounded-full bg-slate-700 flex-shrink-0"></div>
-                  <div className="space-y-2 w-full">
-                    <div className="h-4 bg-slate-700 rounded w-1/3"></div>
-                    <div className="h-16 bg-slate-800 rounded w-full p-4 text-slate-400 italic text-sm">
-                      &ldquo;Cara, você lembra se eu te devolvi aquele controle de
-                      PS5? Tô procurando aqui e não acho...&rdquo;
+              <div className="bg-[#101922] p-6 md:p-8 rounded-2xl border border-slate-700/50 shadow-xl relative z-10">
+                <div className="flex gap-3 md:gap-4 items-start mb-6">
+                  <div className="size-8 md:size-10 rounded-full bg-slate-700 flex-shrink-0"></div>
+                  <div className="space-y-2 flex-grow">
+                    <div className="h-3 md:h-4 bg-slate-700 rounded w-1/3"></div>
+                    <div className="bg-slate-800 rounded-2xl rounded-tl-none p-3 md:p-4 text-slate-400 italic text-xs md:text-sm leading-relaxed">
+                      &ldquo;Cara, você lembra se eu te devolvi aquele controle
+                      de PS5? Tô procurando aqui e não acho...&rdquo;
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-4 items-start flex-row-reverse">
-                  <div className="size-10 rounded-full bg-[#2b8cee] flex-shrink-0"></div>
-                  <div className="space-y-2 w-full text-right">
-                    <div className="h-4 bg-slate-700 rounded w-1/3 ml-auto"></div>
-                    <div className="h-10 bg-[#2b8cee]/20 border border-[#2b8cee]/30 text-[#2b8cee] rounded w-full p-2 flex items-center justify-center gap-2 text-sm font-medium">
-                      <Shield className="w-4 h-4" /> Com TáComQuem isso não
-                      acontece.
+                <div className="flex gap-3 md:gap-4 items-start flex-row-reverse">
+                  <div className="size-8 md:size-10 rounded-full bg-[#2b8cee] flex-shrink-0"></div>
+                  <div className="space-y-2 flex-grow flex flex-col items-end">
+                    <div className="h-3 md:h-4 bg-slate-700 rounded w-1/3"></div>
+                    <div className="bg-[#2b8cee]/20 border border-[#2b8cee]/30 text-[#2b8cee] rounded-2xl rounded-tr-none p-3 flex items-center gap-2 text-xs md:text-sm font-medium w-fit max-w-[90%] md:max-w-full">
+                      <Shield className="w-4 h-4 flex-shrink-0" />
+                      <span>Com TáComQuem isso não acontece.</span>
                     </div>
                   </div>
                 </div>
@@ -347,7 +370,7 @@ export default function HomePage() {
 
       {/* How It Works (3 Steps) */}
       <section id="como-funciona" className="py-24 bg-[#101922]">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Simples como deve ser
@@ -391,7 +414,7 @@ export default function HomePage() {
 
       {/* Features Grid */}
       <section id="beneficios" className="py-24 bg-[#1b2531]">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">
             Tudo o que você precisa
           </h2>
@@ -440,7 +463,7 @@ export default function HomePage() {
 
       {/* Social Proof */}
       <section className="py-24 bg-[#101922] relative overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto bg-gradient-to-br from-[#1b2531] to-[#101922] p-12 rounded-3xl border border-slate-700 relative">
             <div className="text-[#2b8cee] absolute top-8 left-8">
               <svg
@@ -456,7 +479,8 @@ export default function HomePage() {
             <p className="text-xl md:text-2xl font-light leading-relaxed text-center mb-8 relative z-10 pt-6">
               &ldquo;Sempre tive problemas em emprestar meus equipamentos de
               fotografia. Com o <strong>TáComQuem</strong>, eu tenho o controle
-              total e meus amigos até acham o sistema profissional. Genial.&rdquo;
+              total e meus amigos até acham o sistema profissional.
+              Genial.&rdquo;
             </p>
             <div className="flex items-center justify-center gap-4">
               <div
@@ -494,7 +518,7 @@ export default function HomePage() {
               <Link href="/register">Começar Agora Gratuitamente</Link>
             </Button>
             <p className="text-sm text-slate-500">
-              Sem cartão de crédito necessário • Plano gratuito para sempre
+              Sem cartão de crédito necessário
             </p>
           </div>
         </div>
@@ -502,8 +526,11 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="bg-[#101922] border-t border-slate-800 py-12">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <Link href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <Link
+            href="#"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <div className="size-6 text-[#2b8cee]">
               <svg
                 viewBox="0 0 512 512"
@@ -514,9 +541,27 @@ export default function HomePage() {
                 fill="none"
               >
                 <circle cx="256" cy="256" r="60" fill="currentColor" />
-                <path d="M 362 150 A 150 150 0 1 0 150 362" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 150 362 L 190 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 190 322 L 190 392 M 190 322 L 120 322" stroke="currentColor" strokeWidth="65" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M 362 150 A 150 150 0 1 0 150 362"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M 150 362 L 190 322"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M 190 322 L 190 392 M 190 322 L 120 322"
+                  stroke="currentColor"
+                  strokeWidth="65"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
             <span className="font-bold text-lg text-white">TáComQuem</span>
