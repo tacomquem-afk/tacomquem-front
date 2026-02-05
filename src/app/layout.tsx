@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { getCurrentUser } from "@/lib/api/auth";
 import { AuthProvider } from "@/providers/auth-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -61,7 +62,9 @@ export default async function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <AuthProvider initialUser={user}>{children}</AuthProvider>
+          <QueryProvider>
+            <AuthProvider initialUser={user}>{children}</AuthProvider>
+          </QueryProvider>
           <Toaster />
         </ThemeProvider>
       </body>
