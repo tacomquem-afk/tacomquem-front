@@ -24,4 +24,5 @@ plans/
 
 | # | Nome | Status | Descrição |
 |---|------|--------|-----------|
-| 001 | [frontend-setup](./001-frontend-setup/) | Pronto para implementar | Setup do projeto Next.js com Bun, TypeScript, Tailwind, shadcn/ui |
+| 001 | [frontend-setup](./001-frontend-setup/) | ✅ Concluído | Setup do projeto Next.js com Bun, TypeScript, Tailwind, shadcn/ui |
+| 002 | [dashboard-implementation](./002-dashboard-implementation/) | 📋 Pronto para implementar | Dashboard client-side com React Query, design único, dados reais da API |
