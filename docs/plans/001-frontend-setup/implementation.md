@@ -1333,6 +1333,585 @@ git commit -m "chore: complete frontend setup"
 | `.env.example` | Template de variáveis de ambiente |
 | `.prettierrc` | Configuração Prettier |
 | `eslint.config.mjs` | Configuração ESLint |
+| `playwright.config.ts` | Configuração Playwright E2E |
+| `tests/fixtures/auth.fixture.ts` | Fixtures de autenticação para testes |
+| `tests/helpers/auth.helper.ts` | Helpers de autenticação para testes |
+| `tests/helpers/navigation.helper.ts` | Helpers de navegação para testes |
+| `tests/e2e/auth.spec.ts` | Testes E2E de autenticação |
+| `tests/e2e/navigation.spec.ts` | Testes E2E de navegação |
+| `tests/e2e/public-pages.spec.ts` | Testes E2E de páginas públicas |
+| `tests/components/button.spec.ts` | Testes de componentes - Button |
+| `tests/components/card.spec.ts` | Testes de componentes - Card |
+| `.github/workflows/test.yml` | CI/CD workflow para testes E2E |
+
+---
+
+## Fase 10: Testes com Playwright
+
+### Task 10.1: Instalar e configurar Playwright
+
+**Files:**
+- Create: `playwright.config.ts`
+- Create: `tests/` directory
+
+**Step 1: Instalar Playwright**
+
+```bash
+bun add -d @playwright/test
+```
+
+**Step 2: Criar arquivo de configuração**
+
+```bash
+bunx playwright install
+```
+
+**Step 3: Criar `playwright.config.ts`**
+
+```typescript
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./tests/e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+
+  reporter: [
+    ["html"],
+    ["list"],
+  ],
+
+  use: {
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+  },
+
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+    },
+  ],
+
+  webServer: {
+    command: "bun run dev",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+**Step 4: Adicionar scripts ao package.json**
+
+Adicionar no `scripts`:
+```json
+"test:e2e": "playwright test",
+"test:e2e:ui": "playwright test --ui",
+"test:e2e:debug": "playwright test --debug"
+```
+
+**Step 5: Commit**
+
+```bash
+git add playwright.config.ts package.json bun.lockb
+git commit -m "chore: install and configure playwright\""
+```
+
+---
+
+### Task 10.2: Criar fixtures e helpers para testes
+
+**Files:**
+- Create: `tests/fixtures/auth.fixture.ts`
+- Create: `tests/helpers/auth.helper.ts`
+- Create: `tests/helpers/navigation.helper.ts`
+
+**Step 1: Criar `tests/fixtures/auth.fixture.ts`**
+
+```typescript
+import { test as base, expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
+
+type AuthFixtures = {
+  authenticatedPage: Page;
+};
+
+export const test = base.extend<AuthFixtures>({
+  authenticatedPage: async ({ page }, use) => {
+    // Mock de login - você pode substituir com real API calls
+    await page.context().addCookies([
+      {
+        name: "tcq_access_token",
+        value: "mock_token_for_testing",
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        sameSite: "Lax",
+        expires: Date.now() / 1000 + 86400,
+      },
+    ]);
+
+    await use(page);
+  },
+});
+
+export { expect };
+```
+
+**Step 2: Criar `tests/helpers/auth.helper.ts`**
+
+```typescript
+import type { Page } from "@playwright/test";
+
+export async function loginAsUser(
+  page: Page,
+  email: string = "test@example.com",
+  password: string = "password123"
+) {
+  await page.goto("/login");
+  await page.fill('input[type="email"]', email);
+  await page.fill('input[type="password"]', password);
+  await page.click("button[type=\"submit\"]");
+  await page.waitForURL("/dashboard");
+}
+
+export async function logoutUser(page: Page) {
+  // Assumindo que há um botão de logout no header
+  await page.click('[data-testid="user-menu-button"]');
+  await page.click('[data-testid="logout-button"]');
+  await page.waitForURL("/login");
+}
+
+export async function registerNewUser(
+  page: Page,
+  name: string = "Test User",
+  email: string = "newuser@example.com",
+  password: string = "SecurePassword123"
+) {
+  await page.goto("/register");
+  await page.fill('input[placeholder*="nome"]', name);
+  await page.fill('input[type="email"]', email);
+  await page.fill('input[type="password"]', password);
+  await page.click("button[type=\"submit\"]");
+  // Aguardar redirect após registro bem-sucedido
+  await page.waitForURL(/\/(login|dashboard)/);
+}
+```
+
+**Step 3: Criar `tests/helpers/navigation.helper.ts`**
+
+```typescript
+import type { Page } from "@playwright/test";
+
+export async function navigateToDashboard(page: Page) {
+  await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle");
+}
+
+export async function navigateToItems(page: Page) {
+  await page.goto("/dashboard/items");
+  await page.waitForLoadState("networkidle");
+}
+
+export async function navigateToLoans(page: Page) {
+  await page.goto("/dashboard/loans");
+  await page.waitForLoadState("networkidle");
+}
+
+export async function navigateToProfile(page: Page) {
+  await page.goto("/dashboard/profile");
+  await page.waitForLoadState("networkidle");
+}
+```
+
+**Step 4: Commit**
+
+```bash
+git add tests/fixtures/ tests/helpers/
+git commit -m "test: add playwright fixtures and helpers"
+```
+
+---
+
+### Task 10.3: Criar testes E2E para autenticação
+
+**Files:**
+- Create: `tests/e2e/auth.spec.ts`
+
+**Step 1: Criar `tests/e2e/auth.spec.ts`**
+
+```typescript
+import { test, expect } from "@playwright/test";
+import { loginAsUser, registerNewUser, logoutUser } from "../helpers/auth.helper";
+
+test.describe("Authentication Flow", () => {
+  test("should display login page", async ({ page }) => {
+    await page.goto("/login");
+    expect(page.url()).toContain("/login");
+    await expect(page.locator("h1")).toContainText(/login|entrar/i);
+  });
+
+  test("should display register page", async ({ page }) => {
+    await page.goto("/register");
+    expect(page.url()).toContain("/register");
+    await expect(page.locator("h1")).toContainText(/register|cadastro/i);
+  });
+
+  test("should login successfully with valid credentials", async ({
+    page,
+  }) => {
+    // Note: Substitua com credenciais de teste reais
+    await loginAsUser(page);
+    expect(page.url()).toContain("/dashboard");
+  });
+
+  test("should logout successfully", async ({ page, context }) => {
+    // Setup: login
+    await context.addCookies([
+      {
+        name: "tcq_access_token",
+        value: "valid_token",
+        domain: "localhost",
+        path: "/",
+      },
+    ]);
+
+    await page.goto("/dashboard");
+    await logoutUser(page);
+    expect(page.url()).toContain("/login");
+  });
+
+  test("should show error with invalid credentials", async ({ page }) => {
+    await page.goto("/login");
+    await page.fill('input[type="email"]', "wrong@example.com");
+    await page.fill('input[type="password"]', "wrongpassword");
+    await page.click("button[type=\"submit\"]");
+
+    // Aguardar mensagem de erro
+    await expect(page.locator("[role=\"alert\"]")).toBeVisible();
+  });
+
+  test("should register new user successfully", async ({ page }) => {
+    const timestamp = Date.now();
+    const email = `testuser${timestamp}@example.com`;
+
+    await registerNewUser(page, "New Test User", email);
+    // Verificar se foi redirecionado após registro
+    expect(page.url()).toMatch(/\/(login|dashboard)/);
+  });
+});
+```
+
+**Step 2: Commit**
+
+```bash
+git add tests/e2e/auth.spec.ts
+git commit -m "test: add e2e tests for authentication"
+```
+
+---
+
+### Task 10.4: Criar testes E2E para navegação
+
+**Files:**
+- Create: `tests/e2e/navigation.spec.ts`
+
+**Step 1: Criar `tests/e2e/navigation.spec.ts`**
+
+```typescript
+import { test, expect } from "../fixtures/auth.fixture";
+import {
+  navigateToDashboard,
+  navigateToItems,
+  navigateToLoans,
+  navigateToProfile,
+} from "../helpers/navigation.helper";
+
+test.describe("Navigation", () => {
+  test("should navigate to dashboard", async ({ authenticatedPage }) => {
+    await navigateToDashboard(authenticatedPage);
+    expect(authenticatedPage.url()).toContain("/dashboard");
+  });
+
+  test("should navigate to items page", async ({ authenticatedPage }) => {
+    await navigateToItems(authenticatedPage);
+    expect(authenticatedPage.url()).toContain("/items");
+  });
+
+  test("should navigate to loans page", async ({ authenticatedPage }) => {
+    await navigateToLoans(authenticatedPage);
+    expect(authenticatedPage.url()).toContain("/loans");
+  });
+
+  test("should navigate to profile page", async ({ authenticatedPage }) => {
+    await navigateToProfile(authenticatedPage);
+    expect(authenticatedPage.url()).toContain("/profile");
+  });
+
+  test("should have navigation menu", async ({ authenticatedPage }) => {
+    await navigateToDashboard(authenticatedPage);
+    // Verificar se menu de navegação existe
+    const navMenu = authenticatedPage.locator("nav");
+    await expect(navMenu).toBeVisible();
+  });
+});
+```
+
+**Step 2: Commit**
+
+```bash
+git add tests/e2e/navigation.spec.ts
+git commit -m "test: add e2e tests for navigation"
+```
+
+---
+
+### Task 10.5: Criar testes E2E para páginas públicas
+
+**Files:**
+- Create: `tests/e2e/public-pages.spec.ts`
+
+**Step 1: Criar `tests/e2e/public-pages.spec.ts`**
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test.describe("Public Pages", () => {
+  test("should load home page", async ({ page }) => {
+    await page.goto("/");
+    expect(page.url()).toBe("http://localhost:3000/");
+    await expect(page.locator("h1")).toContainText(/TáComQuem/);
+  });
+
+  test("should have working navigation buttons on home", async ({ page }) => {
+    await page.goto("/");
+
+    // Verificar botões de ação
+    const startButton = page.locator("a:has-text('Começar agora')");
+    const loginButton = page.locator("a:has-text('Entrar')");
+
+    await expect(startButton).toBeVisible();
+    await expect(loginButton).toBeVisible();
+  });
+
+  test("should navigate to register from home", async ({ page }) => {
+    await page.goto("/");
+    await page.click("a:has-text('Começar agora')");
+    expect(page.url()).toContain("/register");
+  });
+
+  test("should navigate to login from home", async ({ page }) => {
+    await page.goto("/");
+    await page.click("a:has-text('Entrar')");
+    expect(page.url()).toContain("/login");
+  });
+
+  test("should apply dark theme by default", async ({ page }) => {
+    await page.goto("/");
+    const body = page.locator("body");
+    const bgColor = await body.evaluate(() => {
+      return window.getComputedStyle(document.body).backgroundColor;
+    });
+    // Verificar se background é dark (ajuste conforme seu valor exato)
+    expect(bgColor).toBeTruthy();
+  });
+});
+```
+
+**Step 2: Commit**
+
+```bash
+git add tests/e2e/public-pages.spec.ts
+git commit -m "test: add e2e tests for public pages"
+```
+
+---
+
+### Task 10.6: Configurar CI/CD para testes
+
+**Files:**
+- Create: `.github/workflows/test.yml`
+
+**Step 1: Criar `.github/workflows/test.yml`**
+
+```yaml
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, feature/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps
+
+      - name: Run ESLint
+        run: bun run lint
+
+      - name: Build project
+        run: bun run build
+
+      - name: Run E2E tests
+        run: bun run test:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+```
+
+**Step 2: Commit**
+
+```bash
+git add .github/workflows/test.yml
+git commit -m "chore: configure ci/cd for e2e tests"
+```
+
+---
+
+### Task 10.7: Adicionar testes de componentes
+
+**Files:**
+- Create: `tests/components/button.spec.ts`
+- Create: `tests/components/card.spec.ts`
+
+**Step 1: Criar `tests/components/button.spec.ts`**
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test.describe("Button Component", () => {
+  test("should render button", async ({ page }) => {
+    // Navegar para uma página que tenha botões (ex: home)
+    await page.goto("/");
+    const button = page.locator("button").first();
+    await expect(button).toBeVisible();
+  });
+
+  test("should have hover state", async ({ page }) => {
+    await page.goto("/");
+    const button = page.locator("button").first();
+
+    // Hover over button
+    await button.hover();
+
+    // Verificar estilos de hover (ajuste conforme seu CSS)
+    const computedStyle = await button.evaluate((el) => {
+      return window.getComputedStyle(el).cursor;
+    });
+
+    expect(computedStyle).toBe("pointer");
+  });
+
+  test("should be clickable", async ({ page }) => {
+    await page.goto("/login");
+    const submitButton = page.locator('button[type="submit"]').first();
+    await expect(submitButton).toBeEnabled();
+  });
+});
+```
+
+**Step 2: Criar `tests/components/card.spec.ts`**
+
+```typescript
+import { test, expect } from "@playwright/test";
+
+test.describe("Card Component", () => {
+  test("should render cards on page", async ({ page }) => {
+    // Navegar para página que tem cards (ex: dashboard)
+    await page.goto("/dashboard");
+    const cards = page.locator("[role='article']");
+
+    // Verificar se há cards
+    const count = await cards.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test("should have proper spacing", async ({ page }) => {
+    await page.goto("/dashboard");
+    const card = page.locator("[role='article']").first();
+
+    // Verificar se card é visível
+    await expect(card).toBeVisible();
+
+    // Verificar se tem padding/margin
+    const boundingBox = await card.boundingBox();
+    expect(boundingBox).toBeTruthy();
+    expect(boundingBox?.width).toBeGreaterThan(0);
+  });
+});
+```
+
+**Step 3: Commit**
+
+```bash
+git add tests/components/
+git commit -m "test: add component tests"
+```
+
+---
+
+### Task 10.8: Executar e validar todos os testes
+
+**Step 1: Iniciar servidor de desenvolvimento**
+
+```bash
+bun run dev
+```
+
+**Step 2: Em outro terminal, executar testes**
+
+```bash
+bun run test:e2e
+```
+
+**Step 3: Verificar relatório de testes**
+
+```bash
+bunx playwright show-report
+```
+
+O relatório HTML será aberto mostrando:
+- Testes passando/falhando
+- Screenshots de falhas
+- Traces de execução
+
+**Step 4: Commit final**
+
+```bash
+git add .
+git commit -m "test: complete e2e test setup and validation"
+```
 
 ---
 
@@ -1345,3 +1924,4 @@ Após completar este plano, criar novas iniciativas para:
 3. **004-items** - CRUD de itens
 4. **005-loans** - CRUD de empréstimos
 5. **006-public-links** - Página pública de confirmação
+6. **007-e2e-tests-expansion** - Expandir cobertura de testes para todas as features
