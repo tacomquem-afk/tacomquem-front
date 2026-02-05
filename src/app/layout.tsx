@@ -1,24 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { getCurrentUser } from "@/lib/api/auth";
 import { AuthProvider } from "@/providers/auth-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { QueryProvider } from "@/providers/query-provider";
+import { manrope, sourceSans } from "@/lib/fonts";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
-
-const notoSans = Noto_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-noto-sans",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -51,7 +38,7 @@ export default async function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${inter.variable} ${notoSans.variable}`}
+      className={`${manrope.variable} ${sourceSans.variable}`}
       style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >
