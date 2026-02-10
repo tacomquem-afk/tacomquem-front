@@ -1,27 +1,27 @@
-import type { LucideIcon } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import type { LucideIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type StatCardProps = {
-  icon: LucideIcon
-  label: string
-  value: number
-  trend?: string
-  variant?: 'default' | 'warning' | 'success'
-}
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  trend?: string;
+  variant?: "default" | "warning" | "success";
+};
 
 export function StatCard({
   icon: Icon,
   label,
   value,
   trend,
-  variant = 'default',
+  variant = "default",
 }: StatCardProps) {
   const variantStyles = {
-    default: 'border-border-700',
-    warning: 'border-accent-amber/30 bg-accent-amber/5',
-    success: 'border-accent-green/30 bg-accent-green/5',
-  }
+    default: "border-border-700",
+    warning: "border-accent-amber/30 bg-accent-amber/5",
+    success: "border-accent-green/30 bg-accent-green/5",
+  };
 
   return (
     <Card className={variantStyles[variant]}>
@@ -38,7 +38,7 @@ export function StatCard({
         <p className="text-sm text-muted-foreground mt-1">{label}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function StatCardSkeleton() {
@@ -50,5 +50,5 @@ export function StatCardSkeleton() {
         <Skeleton className="h-4 w-24" />
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -14,26 +14,50 @@ type ApiError = {
   status: number;
 };
 
-function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("tcq_access_token");
+async function getAccessToken(): Promise<string | null> {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("tcq_access_token");
+  }
+  try {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    return cookieStore.get("tcq_access_token")?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
-function getRefreshToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("tcq_refresh_token");
+async function getRefreshToken(): Promise<string | null> {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("tcq_refresh_token");
+  }
+  try {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    return cookieStore.get("tcq_refresh_token")?.value ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function setTokens(accessToken: string, refreshToken: string): void {
   if (typeof window === "undefined") return;
   localStorage.setItem("tcq_access_token", accessToken);
   localStorage.setItem("tcq_refresh_token", refreshToken);
+  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
+  document.cookie = `tcq_access_token=${accessToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
+  document.cookie = `tcq_refresh_token=${refreshToken}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
 }
 
 export function clearTokens(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem("tcq_access_token");
   localStorage.removeItem("tcq_refresh_token");
+  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
+  document.cookie = "tcq_access_token=; path=/; max-age=0";
+  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
+  document.cookie = "tcq_refresh_token=; path=/; max-age=0";
 }
 
 class ApiClient {
@@ -62,7 +86,7 @@ class ApiClient {
   }
 
   private async doRefresh(): Promise<boolean> {
-    const refreshToken = getRefreshToken();
+    const refreshToken = await getRefreshToken();
     if (!refreshToken) return false;
 
     try {
@@ -104,7 +128,7 @@ class ApiClient {
     };
 
     if (!skipAuth) {
-      const token = getAccessToken();
+      const token = await getAccessToken();
       if (token) {
         requestHeaders.Authorization = `Bearer ${token}`;
       }
@@ -126,7 +150,7 @@ class ApiClient {
     if (response.status === 401 && !skipAuth) {
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
-        const newToken = getAccessToken();
+        const newToken = await getAccessToken();
         requestHeaders.Authorization = `Bearer ${newToken}`;
         response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...requestInit,

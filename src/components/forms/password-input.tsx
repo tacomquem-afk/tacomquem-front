@@ -32,7 +32,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <EyeOff
+              className="h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
           ) : (
             <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           )}

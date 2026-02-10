@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Menu, Search, Bell, Plus } from 'lucide-react'
+import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function DashboardHeader() {
   return (
@@ -25,7 +26,7 @@ export function DashboardHeader() {
             </div>
           </SheetContent>
         </Sheet>
-        <span className="text-lg font-bold font-display">TáComQuem</span>
+        <Logo size="sm" linkToHome={false} />
       </div>
 
       {/* Search (desktop) */}
@@ -41,12 +42,6 @@ export function DashboardHeader() {
 
       {/* Actions */}
       <div className="flex items-center gap-4">
-        {/* Biometry badge (desktop) */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-900/20 border border-green-900/30 text-green-400">
-          <div className="size-4 rounded-full bg-green-500" />
-          <span className="text-xs font-semibold">Biometria Ativa</span>
-        </div>
-
         {/* Notifications */}
         <Button variant="outline" size="icon" className="relative">
           <Bell className="size-4" />
@@ -60,5 +55,5 @@ export function DashboardHeader() {
         </Button>
       </div>
     </header>
-  )
+  );
 }

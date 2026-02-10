@@ -1,37 +1,47 @@
-"use client"
+"use client";
 
-import Image from 'next/image'
-import { formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { motion } from 'framer-motion'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { useReturnLoan, useRemindLoan } from '@/hooks/use-loans'
-import { Clock, CheckCircle, AlertCircle, Package } from 'lucide-react'
-import type { Loan, Item, User } from '@/types'
+import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { motion } from "framer-motion";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useReturnLoan, useRemindLoan } from "@/hooks/use-loans";
+import { Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
+import type { Loan, LoanStatus } from "@/types";
 
 type LoanCardProps = {
-  loan: Loan & {
-    item: Pick<Item, 'name' | 'images'>
-    borrower: Pick<User, 'name' | 'avatarUrl'>
-  }
-}
+  loan: Loan;
+};
 
 export function LoanCard({ loan }: LoanCardProps) {
-  const returnMutation = useReturnLoan()
-  const remindMutation = useRemindLoan()
+  const returnMutation = useReturnLoan();
+  const remindMutation = useRemindLoan();
+  const itemImage = loan.item.images[0];
 
-  const statusConfig = {
-    PENDING: { label: 'Pendente', icon: Clock, variant: 'warning' as const },
-    CONFIRMED: { label: 'Emprestado', icon: Clock, variant: 'warning' as const },
-    RETURNED: { label: 'Devolvido', icon: CheckCircle, variant: 'success' as const },
-    CANCELLED: { label: 'Cancelado', icon: AlertCircle, variant: 'destructive' as const },
-  }
+  const statusConfig: Record<
+    LoanStatus,
+    {
+      label: string;
+      icon: typeof Clock;
+      variant: "warning" | "success" | "destructive";
+    }
+  > = {
+    pending: { label: "Pendente", icon: Clock, variant: "warning" },
+    confirmed: { label: "Emprestado", icon: Clock, variant: "warning" },
+    returned: { label: "Devolvido", icon: CheckCircle, variant: "success" },
+    cancelled: {
+      label: "Cancelado",
+      icon: AlertCircle,
+      variant: "destructive",
+    },
+  };
 
-  const config = statusConfig[loan.status]
-  const StatusIcon = config.icon
+  const config = statusConfig[loan.status];
+  const StatusIcon = config.icon;
 
   return (
     <motion.div
@@ -51,9 +61,9 @@ export function LoanCard({ loan }: LoanCardProps) {
             {config.label}
           </Badge>
 
-          {loan.item.images[0] ? (
+          {itemImage ? (
             <Image
-              src={loan.item.images[0]}
+              src={itemImage}
               alt={loan.item.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -68,11 +78,22 @@ export function LoanCard({ loan }: LoanCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
 
           {/* Expected return */}
-          {loan.expectedReturnDate && loan.status !== 'RETURNED' && (
+          {loan.expectedReturnDate && loan.status !== "returned" && (
             <div className="absolute bottom-3 left-3 text-white">
               <p className="text-xs font-medium opacity-90">
-                Devolução esperada:{' '}
-                {formatDistanceToNow(new Date(loan.expectedReturnDate), {
+                Devolução esperada:{" "}
+                {format(new Date(loan.expectedReturnDate), "d 'de' MMM", {
+                  locale: ptBR,
+                })}
+              </p>
+            </div>
+          )}
+
+          {loan.returnedAt && loan.status === "returned" && (
+            <div className="absolute bottom-3 left-3 text-white">
+              <p className="text-xs font-medium opacity-90">
+                Devolvido{" "}
+                {formatDistanceToNow(new Date(loan.returnedAt), {
                   locale: ptBR,
                   addSuffix: true,
                 })}
@@ -84,61 +105,49 @@ export function LoanCard({ loan }: LoanCardProps) {
         {/* Content */}
         <CardContent className="p-4">
           <h3 className="text-base font-bold font-display mb-2">
-            {loan.item.name}
+            {loan.item?.name ?? "Item"}
           </h3>
 
-          <div className="flex items-center gap-2">
-            <Avatar className="size-6 border border-border-700">
-              <AvatarImage src={loan.borrower.avatarUrl ?? undefined} />
-              <AvatarFallback className="text-xs">
-                {loan.borrower.name
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-sm text-muted-foreground">
-              Com{' '}
-              <span className="font-medium text-foreground">
-                {loan.borrower.name}
+          {loan.borrower && (
+            <div className="flex items-center gap-2">
+              <Avatar className="size-6 border border-border-700">
+                <AvatarImage src={loan.borrower.avatarUrl ?? undefined} />
+                <AvatarFallback className="text-xs">
+                  {loan.borrower.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-muted-foreground">
+                {loan.status === "returned" ? "Estava com " : "Com "}
+                <span className="font-medium text-foreground">
+                  {loan.borrower.name}
+                </span>
               </span>
-            </span>
-          </div>
+            </div>
+          )}
         </CardContent>
 
         {/* Actions */}
         <CardFooter className="p-4 pt-0">
-          {loan.status === 'CONFIRMED' ? (
-            <div className="w-full flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => remindMutation.mutate(loan.id)}
-                disabled={remindMutation.isPending}
-              >
-                Lembrar
-              </Button>
-              <Button
-                size="sm"
-                className="flex-1"
-                onClick={() => returnMutation.mutate(loan.id)}
-                disabled={returnMutation.isPending}
-              >
-                Marcar Devolvido
-              </Button>
-            </div>
-          ) : loan.status === 'RETURNED' ? (
+          {loan.status === "confirmed" ? (
             <Button
               variant="outline"
               size="sm"
               className="w-full"
+              onClick={() => remindMutation.mutate(loan.id)}
+              disabled={remindMutation.isPending || returnMutation.isPending}
             >
+              Solicitar Devolução
+            </Button>
+          ) : loan.status === "returned" ? (
+            <Button variant="outline" size="sm" className="w-full">
               Avaliar Estado
             </Button>
           ) : null}
         </CardFooter>
       </Card>
     </motion.div>
-  )
+  );
 }

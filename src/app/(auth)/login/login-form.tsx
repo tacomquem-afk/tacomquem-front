@@ -89,9 +89,7 @@ export function LoginForm() {
               aria-describedby={errors.email ? "email-error" : undefined}
             />
           </div>
-          {errors.email && (
-            <FormError message={errors.email.message} />
-          )}
+          {errors.email && <FormError message={errors.email.message} />}
         </div>
 
         <div className="space-y-2">
@@ -120,9 +118,7 @@ export function LoginForm() {
               aria-describedby={errors.password ? "password-error" : undefined}
             />
           </div>
-          {errors.password && (
-            <FormError message={errors.password.message} />
-          )}
+          {errors.password && <FormError message={errors.password.message} />}
         </div>
 
         <div className="flex items-center space-x-2">

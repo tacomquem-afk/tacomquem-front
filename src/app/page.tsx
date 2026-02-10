@@ -10,6 +10,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -29,38 +30,15 @@ export default function HomePage() {
             href="#"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="size-7 md:size-8 text-[#2b8cee]">
-              <svg
-                viewBox="0 0 512 512"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full"
-                role="img"
-                aria-label="TáComQuem Logo"
-                fill="none"
-              >
-                <circle cx="256" cy="256" r="60" fill="currentColor" />
-                <path
-                  d="M 362 150 A 150 150 0 1 0 150 362"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M 150 362 L 190 322"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M 190 322 L 190 392 M 190 322 L 120 322"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <div className="size-7 md:size-8">
+              <Image
+                src="/logo.png"
+                alt="TáComQuem logo"
+                width={128}
+                height={128}
+                className="size-full object-contain"
+                priority
+              />
             </div>
             <span className="text-lg md:text-xl font-bold tracking-tight text-white whitespace-nowrap">
               TáComQuem
@@ -531,38 +509,14 @@ export default function HomePage() {
             href="#"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="size-6 text-[#2b8cee]">
-              <svg
-                viewBox="0 0 512 512"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full"
-                role="img"
-                aria-label="TáComQuem Logo"
-                fill="none"
-              >
-                <circle cx="256" cy="256" r="60" fill="currentColor" />
-                <path
-                  d="M 362 150 A 150 150 0 1 0 150 362"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M 150 362 L 190 322"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M 190 322 L 190 392 M 190 322 L 120 322"
-                  stroke="currentColor"
-                  strokeWidth="65"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <div className="size-6">
+              <Image
+                src="/logo.png"
+                alt="TáComQuem logo"
+                width={96}
+                height={96}
+                className="size-full object-contain"
+              />
             </div>
             <span className="font-bold text-lg text-white">TáComQuem</span>
           </Link>

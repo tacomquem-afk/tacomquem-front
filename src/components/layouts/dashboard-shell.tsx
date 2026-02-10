@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
-import { DashboardSidebar } from './dashboard-sidebar'
-import { DashboardHeader } from './dashboard-header'
+import type { ReactNode } from "react";
+import { DashboardSidebar } from "./dashboard-sidebar";
+import { DashboardHeader } from "./dashboard-header";
 
 type DashboardShellProps = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
 export function DashboardShell({ children }: DashboardShellProps) {
   return (
@@ -20,5 +20,5 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </div>
       </main>
     </div>
-  )
+  );
 }

@@ -50,8 +50,10 @@ export function RegisterForm() {
     if (/[^a-zA-Z0-9]/.test(pwd)) score++;
 
     if (score <= 2) return { level: 25, label: "Fraca", color: "bg-red-500" };
-    if (score === 3) return { level: 50, label: "Média", color: "bg-yellow-500" };
-    if (score === 4) return { level: 75, label: "Forte", color: "bg-green-500" };
+    if (score === 3)
+      return { level: 50, label: "Média", color: "bg-yellow-500" };
+    if (score === 4)
+      return { level: 75, label: "Forte", color: "bg-green-500" };
     return { level: 100, label: "Excelente", color: "bg-green-600" };
   };
 

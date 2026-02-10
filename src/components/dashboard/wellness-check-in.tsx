@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Smile } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useDashboard } from "@/hooks/use-dashboard";
+import { Smile } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const feelings = [
-  { emoji: '😄', label: 'Tranquilo', value: 'calm' },
-  { emoji: '😐', label: 'Neutro', value: 'neutral' },
-  { emoji: '😰', label: 'Preocupado', value: 'worried' },
-]
+  { emoji: "😄", label: "Tranquilo", value: "calm" },
+  { emoji: "😐", label: "Neutro", value: "neutral" },
+  { emoji: "😰", label: "Preocupado", value: "worried" },
+];
 
 export function WellnessCheckIn() {
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(null);
+  const { data } = useDashboard();
+  const highlightedItem = data?.activeLoans[0]?.itemName;
 
   return (
     <Card className="border-border-700">
@@ -27,8 +30,11 @@ export function WellnessCheckIn() {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Emprestar itens fortalece laços, mas pode causar ansiedade. Como
-          você se sente sobre seus empréstimos?
+          Emprestar itens fortalece laços, mas pode causar ansiedade. Como você
+          se sente sobre{` `}
+          {highlightedItem
+            ? `o empréstimo de ${highlightedItem}?`
+            : "seus empréstimos?"}
         </p>
 
         <div className="flex gap-2">
@@ -38,9 +44,8 @@ export function WellnessCheckIn() {
               variant="outline"
               size="lg"
               className={cn(
-                'flex-1 text-2xl h-auto py-3 hover:scale-105 transition-transform',
-                selected === feeling.value &&
-                  'bg-primary/10 border-primary'
+                "flex-1 text-2xl h-auto py-3 hover:scale-105 transition-transform",
+                selected === feeling.value && "bg-primary/10 border-primary"
               )}
               onClick={() => setSelected(feeling.value)}
               title={feeling.label}
@@ -51,5 +56,5 @@ export function WellnessCheckIn() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

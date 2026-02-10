@@ -1,9 +1,9 @@
-import { Package, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
-import { StatCard, StatCardSkeleton } from './stat-card'
-import { useDashboard } from '@/hooks/use-dashboard'
+import { Package, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { StatCard, StatCardSkeleton } from "./stat-card";
+import { useDashboard } from "@/hooks/use-dashboard";
 
 export function StatsGrid() {
-  const { data, isLoading } = useDashboard()
+  const { data, isLoading } = useDashboard();
 
   if (isLoading) {
     return (
@@ -12,7 +12,7 @@ export function StatsGrid() {
         <StatCardSkeleton />
         <StatCardSkeleton />
       </div>
-    )
+    );
   }
 
   return (
@@ -36,5 +36,5 @@ export function StatsGrid() {
         variant="success"
       />
     </div>
-  )
+  );
 }

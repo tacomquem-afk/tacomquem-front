@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import { StatsGrid } from '@/components/dashboard/stats-grid'
-import { LoanCardGrid } from '@/components/dashboard/loan-card-grid'
-import { WellnessCheckIn } from '@/components/dashboard/wellness-check-in'
-import { ActivityTimeline } from '@/components/dashboard/activity-timeline'
-import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { LoanCardGrid } from "@/components/dashboard/loan-card-grid";
+import { ActivityTimeline } from "@/components/dashboard/activity-timeline";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
   return (
@@ -19,9 +17,6 @@ export default function DashboardPage() {
           Gerencie seus itens compartilhados com tranquilidade.
         </p>
       </div>
-
-      {/* Stats */}
-      <StatsGrid />
 
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -42,10 +37,9 @@ export default function DashboardPage() {
 
         {/* Sidebar widgets */}
         <div className="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
-          <WellnessCheckIn />
           <ActivityTimeline />
         </div>
       </div>
     </div>
-  )
+  );
 }
