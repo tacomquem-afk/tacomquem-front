@@ -19,12 +19,12 @@ test.describe("Navigation", () => {
 
   test("should navigate to loans page", async ({ authenticatedPage }) => {
     await navigateToLoans(authenticatedPage);
-    expect(authenticatedPage.url()).toContain("/loans");
+    expect(authenticatedPage.url()).toContain("/dashboard/history");
   });
 
   test("should navigate to profile page", async ({ authenticatedPage }) => {
     await navigateToProfile(authenticatedPage);
-    expect(authenticatedPage.url()).toContain("/profile");
+    expect(authenticatedPage.url()).toContain("/dashboard/friends");
   });
 
   test("should have navigation menu", async ({ authenticatedPage }) => {

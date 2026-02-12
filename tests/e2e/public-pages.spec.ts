@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Public Pages", () => {
-  test("should load home page", async ({ page }) => {
+  test("should load home page", async ({ page, baseURL }) => {
     await page.goto("/");
-    expect(page.url()).toBe("http://localhost:3001/");
+    expect(page.url()).toBe(`${baseURL}/`);
     await expect(page.locator("h1")).toContainText(/TáComQuem/);
   });
 
@@ -11,8 +11,8 @@ test.describe("Public Pages", () => {
     await page.goto("/");
 
     // Verificar botões de ação
-    const startButton = page.locator("a:has-text('Começar agora')");
-    const loginButton = page.locator("a:has-text('Entrar')");
+    const startButton = page.locator("a:has-text('Começar agora')").first();
+    const loginButton = page.locator("a:has-text('Entrar')").first();
 
     await expect(startButton).toBeVisible();
     await expect(loginButton).toBeVisible();
@@ -21,12 +21,14 @@ test.describe("Public Pages", () => {
   test("should navigate to register from home", async ({ page }) => {
     await page.goto("/");
     await page.click("a:has-text('Começar agora')");
+    await page.waitForURL("**/register**");
     expect(page.url()).toContain("/register");
   });
 
   test("should navigate to login from home", async ({ page }) => {
     await page.goto("/");
     await page.click("a:has-text('Entrar')");
+    await page.waitForURL("**/login**");
     expect(page.url()).toContain("/login");
   });
 

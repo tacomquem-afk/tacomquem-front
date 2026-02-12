@@ -11,11 +11,11 @@ export async function navigateToItems(page: Page) {
 }
 
 export async function navigateToLoans(page: Page) {
-  await page.goto("/dashboard/loans");
+  await page.goto("/dashboard/history");
   await page.waitForLoadState("networkidle");
 }
 
 export async function navigateToProfile(page: Page) {
-  await page.goto("/dashboard/profile");
+  await page.goto("/dashboard/friends");
   await page.waitForLoadState("networkidle");
 }
