@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Package } from "lucide-react";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Item } from "@/types";
 
 type ItemCardProps = {
@@ -63,9 +63,7 @@ export function ItemCard({ item }: ItemCardProps) {
 
         {/* Content */}
         <CardContent className="p-4">
-          <h3 className="text-base font-bold font-display mb-1">
-            {item.name}
-          </h3>
+          <h3 className="text-base font-bold font-display mb-1">{item.name}</h3>
           {item.description && (
             <p className="text-sm text-muted-foreground line-clamp-2">
               {item.description}

@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock, User } from "lucide-react";
+import { Loader2, Lock, Mail, User } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { SocialLoginButton } from "@/components/auth/social-login-button";
-import { PasswordInput } from "@/components/forms/password-input";
 import { FormError } from "@/components/forms/form-error";
-import { Divider } from "@/components/ui/divider";
+import { PasswordInput } from "@/components/forms/password-input";
 import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/providers/auth-provider";
-import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import type { ApiError } from "@/lib/api/client";
+import { type RegisterFormData, registerSchema } from "@/lib/validations/auth";
+import { useAuth } from "@/providers/auth-provider";
 
 export function RegisterForm() {
   const { register: registerUser } = useAuth();

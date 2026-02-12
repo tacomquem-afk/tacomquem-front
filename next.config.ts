@@ -14,12 +14,20 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
         protocol: "https",
         hostname: "picsum.photos",
       },
       {
         protocol: "https",
         hostname: "**.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.r2.cloudflarestorage.com",
       },
       {
         protocol: "https",

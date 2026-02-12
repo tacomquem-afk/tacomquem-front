@@ -1,24 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock } from "lucide-react";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { SocialLoginButton } from "@/components/auth/social-login-button";
-import { PasswordInput } from "@/components/forms/password-input";
 import { FormError } from "@/components/forms/form-error";
-import { Divider } from "@/components/ui/divider";
+import { PasswordInput } from "@/components/forms/password-input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useAuth } from "@/providers/auth-provider";
-import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import type { ApiError } from "@/lib/api/client";
+import { type LoginFormData, loginSchema } from "@/lib/validations/auth";
+import { useAuth } from "@/providers/auth-provider";
 
 export function LoginForm() {
   const searchParams = useSearchParams();

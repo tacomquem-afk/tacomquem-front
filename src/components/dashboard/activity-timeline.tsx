@@ -1,11 +1,11 @@
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bell, CheckCircle, CircleCheckBig, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { cn } from "@/lib/utils";
-import { Handshake, CheckCircle, Bell, CircleCheckBig } from "lucide-react";
 
 const iconMap = {
   loan_created: Handshake,

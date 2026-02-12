@@ -1,10 +1,15 @@
 "use client";
 
+import { Package, Plus } from "lucide-react";
+import { useState } from "react";
+
+import { CreateItemDialog } from "@/components/dashboard/create-item-dialog";
 import { ItemCardGrid } from "@/components/dashboard/item-card-grid";
 import { Button } from "@/components/ui/button";
-import { Package, Plus } from "lucide-react";
 
 export default function ItemsPage() {
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -15,7 +20,7 @@ export default function ItemsPage() {
             Gerencie os itens que você cadastrou para empréstimo.
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setCreateDialogOpen(true)}>
           <Plus className="size-4" />
           Novo Item
         </Button>
@@ -30,6 +35,11 @@ export default function ItemsPage() {
 
         <ItemCardGrid />
       </div>
+
+      <CreateItemDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </div>
   );
 }

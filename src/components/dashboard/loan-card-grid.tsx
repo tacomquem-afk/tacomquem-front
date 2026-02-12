@@ -1,7 +1,7 @@
-import { LoanCard } from "./loan-card";
+import { Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLoans } from "@/hooks/use-loans";
-import { Package } from "lucide-react";
+import { LoanCard } from "./loan-card";
 export function LoanCardGrid() {
   const { data: loans, isLoading } = useLoans("lent");
 

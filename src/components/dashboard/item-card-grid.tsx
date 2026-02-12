@@ -1,7 +1,7 @@
-import { ItemCard } from "./item-card";
+import { Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useItems } from "@/hooks/use-items";
-import { Package } from "lucide-react";
+import { ItemCard } from "./item-card";
 
 export function ItemCardGrid() {
   const { data: items, isLoading } = useItems();

@@ -162,7 +162,7 @@ class ApiClient {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw {
-        error: errorData.error ?? "An error occurred",
+        error: errorData.detail ?? errorData.error ?? "An error occurred",
         status: response.status,
       } as ApiError;
     }
@@ -196,6 +196,46 @@ class ApiClient {
 
   delete<T>(endpoint: string, config?: Omit<RequestConfig, "method" | "body">) {
     return this.request<T>(endpoint, { ...config, method: "DELETE" });
+  }
+
+  async upload<T>(endpoint: string, formData: FormData): Promise<T> {
+    const token = await getAccessToken();
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    let response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+
+    if (response.status === 401) {
+      const refreshed = await this.refreshAccessToken();
+      if (refreshed) {
+        const newToken = await getAccessToken();
+        if (newToken) {
+          headers.Authorization = `Bearer ${newToken}`;
+        }
+        response = await fetch(`${this.baseUrl}${endpoint}`, {
+          method: "POST",
+          headers,
+          body: formData,
+        });
+      }
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw {
+        error: errorData.detail ?? errorData.error ?? "An error occurred",
+        status: response.status,
+      } as ApiError;
+    }
+
+    return response.json();
   }
 }
 

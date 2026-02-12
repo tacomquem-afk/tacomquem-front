@@ -1,9 +1,9 @@
 "use client";
 
-import { LoanCardGrid } from "@/components/dashboard/loan-card-grid";
-import { ActivityTimeline } from "@/components/dashboard/activity-timeline";
-import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { ActivityTimeline } from "@/components/dashboard/activity-timeline";
+import { LoanCardGrid } from "@/components/dashboard/loan-card-grid";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   return (

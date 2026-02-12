@@ -1,16 +1,15 @@
 "use client";
 
-import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, CheckCircle, Clock, Package } from "lucide-react";
+import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useReturnLoan, useRemindLoan } from "@/hooks/use-loans";
-import { Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useRemindLoan, useReturnLoan } from "@/hooks/use-loans";
 import type { Loan, LoanStatus } from "@/types";
 
 type LoanCardProps = {

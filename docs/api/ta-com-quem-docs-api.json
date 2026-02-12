@@ -930,7 +930,7 @@
                   "images": {
                     "default": [],
                     "type": "array",
-                    "items": { "type": "string", "format": "uri" }
+                    "items": { "type": "string", "minLength": 1 }
                   }
                 },
                 "required": ["name"]
@@ -965,7 +965,7 @@
                         },
                         "images": {
                           "type": "array",
-                          "items": { "type": "string", "format": "uri" }
+                          "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
                         "createdAt": {
@@ -1108,7 +1108,7 @@
                           },
                           "images": {
                             "type": "array",
-                            "items": { "type": "string", "format": "uri" }
+                            "items": { "type": "string" }
                           },
                           "isActive": { "type": "boolean" },
                           "createdAt": {
@@ -1225,7 +1225,7 @@
                         },
                         "images": {
                           "type": "array",
-                          "items": { "type": "string", "format": "uri" }
+                          "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
                         "createdAt": {
@@ -1354,7 +1354,7 @@
                   "description": { "type": "string", "maxLength": 1000 },
                   "images": {
                     "type": "array",
-                    "items": { "type": "string", "format": "uri" }
+                    "items": { "type": "string", "minLength": 1 }
                   }
                 }
               }
@@ -1399,7 +1399,7 @@
                         },
                         "images": {
                           "type": "array",
-                          "items": { "type": "string", "format": "uri" }
+                          "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
                         "createdAt": {
@@ -1651,8 +1651,24 @@
     },
     "/api/upload/images": {
       "post": {
+        "summary": "Upload images",
         "tags": ["Upload"],
-        "description": "Upload multiple images (compressed to WebP)",
+        "description": "Upload up to 5 images (max 10MB each). Images are auto-compressed to WebP. Accepted formats: JPEG, PNG, WebP, HEIC, TIFF.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": { "type": "string", "format": "binary" }
+                  }
+                }
+              }
+            }
+          }
+        },
         "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
@@ -1667,10 +1683,16 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "key": { "type": "string" },
                           "url": { "type": "string", "format": "uri" },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                          },
                           "sizeBytes": { "type": "number" }
                         },
-                        "required": ["url", "sizeBytes"],
+                        "required": ["key", "url", "expiresAt", "sizeBytes"],
                         "additionalProperties": false
                       }
                     }
@@ -1797,6 +1819,45 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -1862,7 +1923,7 @@
                             "name": { "type": "string" },
                             "images": {
                               "type": "array",
-                              "items": { "type": "string", "format": "uri" }
+                              "items": { "type": "string" }
                             }
                           },
                           "required": ["id", "name", "images"],
@@ -2153,7 +2214,7 @@
                               "name": { "type": "string" },
                               "images": {
                                 "type": "array",
-                                "items": { "type": "string", "format": "uri" }
+                                "items": { "type": "string" }
                               }
                             },
                             "required": ["id", "name", "images"],
@@ -2367,7 +2428,7 @@
                             "name": { "type": "string" },
                             "images": {
                               "type": "array",
-                              "items": { "type": "string", "format": "uri" }
+                              "items": { "type": "string" }
                             }
                           },
                           "required": ["id", "name", "images"],
@@ -2619,7 +2680,7 @@
                             "name": { "type": "string" },
                             "images": {
                               "type": "array",
-                              "items": { "type": "string", "format": "uri" }
+                              "items": { "type": "string" }
                             }
                           },
                           "required": ["id", "name", "images"],
@@ -3140,7 +3201,7 @@
                     "itemName": { "type": "string" },
                     "itemImages": {
                       "type": "array",
-                      "items": { "type": "string", "format": "uri" }
+                      "items": { "type": "string" }
                     },
                     "lenderName": { "type": "string" }
                   },
@@ -3232,7 +3293,7 @@
                             "name": { "type": "string" },
                             "images": {
                               "type": "array",
-                              "items": { "type": "string", "format": "uri" }
+                              "items": { "type": "string" }
                             }
                           },
                           "required": ["id", "name", "images"],
@@ -3597,9 +3658,14 @@
                           },
                           "itemName": { "type": "string" },
                           "borrowerEmail": {
-                            "type": "string",
-                            "format": "email",
-                            "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "email",
+                                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
                           },
                           "createdAt": {
                             "type": "string",
@@ -3629,7 +3695,7 @@
                           "itemName": { "type": "string" },
                           "itemImages": {
                             "type": "array",
-                            "items": { "type": "string", "format": "uri" }
+                            "items": { "type": "string" }
                           },
                           "otherParty": { "type": "string" },
                           "role": {
@@ -4492,7 +4558,7 @@
                               "name": { "type": "string" },
                               "images": {
                                 "type": "array",
-                                "items": { "type": "string", "format": "uri" }
+                                "items": { "type": "string" }
                               }
                             },
                             "required": ["id", "name", "images"],
@@ -4634,7 +4700,7 @@
                               "name": { "type": "string" },
                               "images": {
                                 "type": "array",
-                                "items": { "type": "string", "format": "uri" }
+                                "items": { "type": "string" }
                               }
                             },
                             "required": ["id", "name", "images"],
@@ -4774,7 +4840,7 @@
                           },
                           "images": {
                             "type": "array",
-                            "items": { "type": "string", "format": "uri" }
+                            "items": { "type": "string" }
                           },
                           "isActive": { "type": "boolean" },
                           "createdAt": {
@@ -5312,7 +5378,7 @@
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "format": "uri" }
+                      "items": { "type": "string" }
                     },
                     "isActive": { "type": "boolean" },
                     "owner": {
@@ -5688,7 +5754,7 @@
                         "name": { "type": "string" },
                         "images": {
                           "type": "array",
-                          "items": { "type": "string", "format": "uri" }
+                          "items": { "type": "string" }
                         }
                       },
                       "required": ["id", "name", "images"],
@@ -6922,7 +6988,7 @@
       }
     }
   },
-  "servers": [{ "url": "http://localhost:5173", "description": "Development" }],
+  "servers": [{ "url": "http://localhost:3000", "description": "Development" }],
   "tags": [
     { "name": "Authentication", "description": "Authentication endpoints" },
     { "name": "OAuth", "description": "OAuth authentication providers" },
