@@ -72,8 +72,8 @@ export default function FriendsPage() {
             <Users className="size-12 text-muted-foreground mb-4" />
             <h3 className="font-semibold text-lg mb-2">Nenhum amigo ainda</h3>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Quando você emprestar ou pegar itens emprestados, as pessoas
-              aparecerão aqui automaticamente.
+              Quando um empréstimo for confirmado, a pessoa aparecerá aqui
+              automaticamente.
             </p>
           </div>
         ) : filtered.length === 0 ? (

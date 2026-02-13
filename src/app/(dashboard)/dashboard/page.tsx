@@ -33,6 +33,22 @@ export default function DashboardPage() {
           </div>
 
           <LoanCardGrid />
+
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold flex items-center gap-2">
+              <ArrowRight className="size-5 text-primary" />
+              Itens que Peguei Emprestado
+            </h2>
+            <Button variant="link" size="sm">
+              Ver todos
+            </Button>
+          </div>
+
+          <LoanCardGrid
+            filter="borrowed"
+            emptyTitle="Nenhum item pego emprestado"
+            emptyDescription="Quando você confirmar um empréstimo recebido, ele aparecerá aqui."
+          />
         </div>
 
         {/* Sidebar widgets */}

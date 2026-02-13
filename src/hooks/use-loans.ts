@@ -83,6 +83,7 @@ export function useReturnLoan() {
       // Refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: ["loans"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     },
   });
 }

@@ -1,9 +1,22 @@
 import { Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLoans } from "@/hooks/use-loans";
+import type { LoanListFilter } from "@/types";
 import { LoanCard } from "./loan-card";
-export function LoanCardGrid() {
-  const { data: loans, isLoading } = useLoans("lent");
+
+type LoanCardGridProps = {
+  filter?: Extract<LoanListFilter, "lent" | "borrowed">;
+  emptyTitle?: string;
+  emptyDescription?: string;
+};
+
+export function LoanCardGrid({
+  filter = "lent",
+  emptyTitle,
+  emptyDescription,
+}: LoanCardGridProps) {
+  const { data: loans, isLoading } = useLoans(filter);
+  const isBorrowed = filter === "borrowed";
 
   if (isLoading) {
     return (
@@ -19,9 +32,17 @@ export function LoanCardGrid() {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-700 rounded-2xl">
         <Package className="size-12 text-muted-foreground mb-4" />
-        <h3 className="font-semibold text-lg mb-2">Nenhum item emprestado</h3>
+        <h3 className="font-semibold text-lg mb-2">
+          {emptyTitle ??
+            (isBorrowed
+              ? "Nenhum item pego emprestado"
+              : "Nenhum item emprestado")}
+        </h3>
         <p className="text-sm text-muted-foreground max-w-sm">
-          Comece registrando seu primeiro empréstimo para acompanhar seus itens.
+          {emptyDescription ??
+            (isBorrowed
+              ? "Quando você confirmar um empréstimo, ele aparecerá aqui."
+              : "Comece registrando seu primeiro empréstimo para acompanhar seus itens.")}
         </p>
       </div>
     );
@@ -30,7 +51,11 @@ export function LoanCardGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {loans.map((loan) => (
-        <LoanCard key={loan.id} loan={loan} />
+        <LoanCard
+          key={loan.id}
+          loan={loan}
+          role={isBorrowed ? "borrower" : "lender"}
+        />
       ))}
     </div>
   );

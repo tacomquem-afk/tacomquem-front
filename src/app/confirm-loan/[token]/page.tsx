@@ -3,7 +3,8 @@
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -25,11 +26,12 @@ type PublicLoanInfo = {
 export default function ConfirmLoanPage() {
   const params = useParams<{ token: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isAuthenticated, isLoading } = useAuth();
   const token = typeof params.token === "string" ? params.token : "";
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [message, setMessage] = useState<string>("");
   const [loan, setLoan] = useState<Loan | null>(null);
   const [publicInfo, setPublicInfo] = useState<PublicLoanInfo | null>(null);
@@ -56,35 +58,36 @@ export default function ConfirmLoanPage() {
     if (!token || isLoading) return;
 
     if (!isAuthenticated) {
-      router.replace(`/login?next=${encodeURIComponent(`/confirm-loan/${token}`)}`);
-      return;
+      router.replace(
+        `/login?next=${encodeURIComponent(`/confirm-loan/${token}`)}`
+      );
     }
+  }, [isAuthenticated, isLoading, router, token]);
 
-    let cancelled = false;
+  const handleConfirmLoan = async () => {
+    if (!token || !isAuthenticated || status === "loading") return;
+
     setStatus("loading");
     setMessage("");
 
-    api
-      .post<ConfirmLoanResponse>(`/api/links/${token}/confirm`)
-      .then((data) => {
-        if (cancelled) return;
-        setLoan(data.loan);
-        setStatus("success");
-        setMessage(data.message || "Empréstimo confirmado com sucesso.");
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        const detail =
-          (err as { error?: string }).error ||
-          "Não foi possível confirmar este empréstimo.";
-        setStatus("error");
-        setMessage(detail);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isAuthenticated, isLoading, router, token]);
+    try {
+      const data = await api.post<ConfirmLoanResponse>(
+        `/api/links/${token}/confirm`
+      );
+      queryClient.invalidateQueries({ queryKey: ["loans"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
+      setLoan(data.loan);
+      setStatus("success");
+      setMessage(data.message || "Empréstimo confirmado com sucesso.");
+    } catch (err) {
+      const detail =
+        (err as { error?: string }).error ||
+        "Não foi possível confirmar este empréstimo.";
+      setStatus("error");
+      setMessage(detail);
+    }
+  };
 
   const itemName = loan?.item.name ?? publicInfo?.itemName ?? "Item";
   const itemImage = loan?.item.images[0] ?? publicInfo?.itemImages?.[0];
@@ -103,43 +106,69 @@ export default function ConfirmLoanPage() {
     ? new Date(loan.expectedReturnDate).toLocaleString("pt-BR")
     : null;
 
-  const content = useMemo(() => {
-    if (status === "loading" || status === "idle") {
-      return (
-        <>
-          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10">
-            <Loader2 className="size-6 animate-spin text-primary" />
-          </div>
-          <h1 className="text-center text-xl font-display font-bold">
-            Confirmando empréstimo
-          </h1>
-          <p className="mt-1 text-center text-sm text-muted-foreground">
-            Aguarde enquanto validamos seu link.
-          </p>
-        </>
-      );
-    }
+  let content: ReactNode;
 
-    if (status === "success") {
-      return (
-        <>
-          <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-green-500/10">
-            <CheckCircle2 className="size-6 text-green-500" />
-          </div>
-          <h1 className="text-center text-xl font-display font-bold">
-            Empréstimo confirmado
-          </h1>
-          <p className="mt-1 text-center text-sm text-muted-foreground">
-            {message}
-          </p>
-          <Button asChild className="mt-6 w-full">
-            <Link href="/dashboard">Ir para o dashboard</Link>
-          </Button>
-        </>
-      );
-    }
-
-    return (
+  if (isLoading || (!isAuthenticated && status === "idle")) {
+    content = (
+      <>
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10">
+          <Loader2 className="size-6 animate-spin text-primary" />
+        </div>
+        <h1 className="text-center text-xl font-display font-bold">
+          Carregando confirmação
+        </h1>
+        <p className="mt-1 text-center text-sm text-muted-foreground">
+          Aguarde enquanto validamos seu acesso.
+        </p>
+      </>
+    );
+  } else if (status === "loading") {
+    content = (
+      <>
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10">
+          <Loader2 className="size-6 animate-spin text-primary" />
+        </div>
+        <h1 className="text-center text-xl font-display font-bold">
+          Confirmando empréstimo
+        </h1>
+        <p className="mt-1 text-center text-sm text-muted-foreground">
+          Estamos registrando que você recebeu este item.
+        </p>
+      </>
+    );
+  } else if (status === "idle") {
+    content = (
+      <>
+        <h1 className="text-center text-xl font-display font-bold">
+          Confirmar recebimento
+        </h1>
+        <p className="mt-1 text-center text-sm text-muted-foreground">
+          Confirme para registrar que você pegou este item emprestado.
+        </p>
+        <Button className="mt-6 w-full" onClick={handleConfirmLoan}>
+          Confirmar que peguei
+        </Button>
+      </>
+    );
+  } else if (status === "success") {
+    content = (
+      <>
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-green-500/10">
+          <CheckCircle2 className="size-6 text-green-500" />
+        </div>
+        <h1 className="text-center text-xl font-display font-bold">
+          Empréstimo confirmado
+        </h1>
+        <p className="mt-1 text-center text-sm text-muted-foreground">
+          {message}
+        </p>
+        <Button asChild className="mt-6 w-full">
+          <Link href="/dashboard">Ir para o dashboard</Link>
+        </Button>
+      </>
+    );
+  } else {
+    content = (
       <>
         <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-red-500/10">
           <XCircle className="size-6 text-red-500" />
@@ -147,15 +176,15 @@ export default function ConfirmLoanPage() {
         <h1 className="text-center text-xl font-display font-bold">
           Não foi possível confirmar
         </h1>
-        <p className="mt-1 text-center text-sm text-muted-foreground">{message}</p>
-        <div className="mt-6 flex gap-2">
-          <Button asChild className="w-full" variant="outline">
-            <Link href="/dashboard">Voltar ao dashboard</Link>
-          </Button>
-        </div>
+        <p className="mt-1 text-center text-sm text-muted-foreground">
+          {message}
+        </p>
+        <Button className="mt-6 w-full" onClick={handleConfirmLoan}>
+          Tentar novamente
+        </Button>
       </>
     );
-  }, [message, status]);
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -201,7 +230,9 @@ export default function ConfirmLoanPage() {
                 )}
                 {expectedReturnDate && (
                   <p>
-                    <span className="text-muted-foreground">Devolução prevista:</span>{" "}
+                    <span className="text-muted-foreground">
+                      Devolução prevista:
+                    </span>{" "}
                     {expectedReturnDate}
                   </p>
                 )}

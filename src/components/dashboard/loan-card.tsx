@@ -14,12 +14,24 @@ import type { Loan, LoanStatus } from "@/types";
 
 type LoanCardProps = {
   loan: Loan;
+  role?: "lender" | "borrower";
 };
 
-export function LoanCard({ loan }: LoanCardProps) {
+export function LoanCard({ loan, role = "lender" }: LoanCardProps) {
   const returnMutation = useReturnLoan();
   const remindMutation = useRemindLoan();
   const itemImage = loan.item.images[0];
+  const counterpart = role === "borrower" ? loan.lender : loan.borrower;
+  const counterpartName =
+    counterpart?.name ??
+    (role === "lender" ? (loan.borrowerEmail ?? "—") : "—");
+  const counterpartInitials =
+    counterpartName
+      .split(" ")
+      .map((part) => part.trim()[0] ?? "")
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
 
   const statusConfig: Record<
     LoanStatus,
@@ -107,21 +119,24 @@ export function LoanCard({ loan }: LoanCardProps) {
             {loan.item?.name ?? "Item"}
           </h3>
 
-          {loan.borrower && (
+          {counterpartName && (
             <div className="flex items-center gap-2">
               <Avatar className="size-6 border border-border-700">
-                <AvatarImage src={loan.borrower.avatarUrl ?? undefined} />
+                <AvatarImage src={counterpart?.avatarUrl ?? undefined} />
                 <AvatarFallback className="text-xs">
-                  {loan.borrower.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
+                  {counterpartInitials}
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm text-muted-foreground">
-                {loan.status === "returned" ? "Estava com " : "Com "}
+                {role === "borrower"
+                  ? loan.status === "returned"
+                    ? "Devolvido para "
+                    : "Emprestado por "
+                  : loan.status === "returned"
+                    ? "Estava com "
+                    : "Com "}
                 <span className="font-medium text-foreground">
-                  {loan.borrower.name}
+                  {counterpartName}
                 </span>
               </span>
             </div>
@@ -130,7 +145,7 @@ export function LoanCard({ loan }: LoanCardProps) {
 
         {/* Actions */}
         <CardFooter className="p-4 pt-0">
-          {loan.status === "confirmed" ? (
+          {role === "lender" && loan.status === "confirmed" ? (
             <Button
               variant="outline"
               size="sm"
@@ -140,7 +155,7 @@ export function LoanCard({ loan }: LoanCardProps) {
             >
               Solicitar Devolução
             </Button>
-          ) : loan.status === "returned" ? (
+          ) : role === "lender" && loan.status === "returned" ? (
             <Button variant="outline" size="sm" className="w-full">
               Avaliar Estado
             </Button>
