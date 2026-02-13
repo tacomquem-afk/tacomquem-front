@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthCard } from "@/components/auth/auth-card";
@@ -16,9 +16,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { ApiError } from "@/lib/api/client";
+import { api, type ApiError } from "@/lib/api/client";
 import { type LoginFormData, loginSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/providers/auth-provider";
+
+type PublicLoanInfo = {
+  itemName: string;
+  itemImages: string[];
+  lenderName: string;
+};
 
 export function LoginForm() {
   const searchParams = useSearchParams();
@@ -28,8 +34,38 @@ export function LoginForm() {
 
   const registered = searchParams.get("registered") === "true";
   const nextParam = searchParams.get("next");
-  const redirectTo =
-    nextParam?.startsWith("/") ? nextParam : "/dashboard";
+  const safeNextParam = nextParam?.startsWith("/") ? nextParam : null;
+  const redirectTo = safeNextParam ?? "/dashboard";
+  const registerHref = safeNextParam
+    ? `/register?next=${encodeURIComponent(safeNextParam)}`
+    : "/register";
+  const confirmToken = useMemo(() => {
+    if (!safeNextParam?.startsWith("/confirm-loan/")) return null;
+    const token = safeNextParam.slice("/confirm-loan/".length).split("?")[0];
+    return token || null;
+  }, [safeNextParam]);
+  const [publicLoanInfo, setPublicLoanInfo] = useState<PublicLoanInfo | null>(null);
+
+  useEffect(() => {
+    if (!confirmToken) {
+      setPublicLoanInfo(null);
+      return;
+    }
+
+    let cancelled = false;
+    api
+      .get<PublicLoanInfo>(`/api/links/${confirmToken}`, { skipAuth: true })
+      .then((data) => {
+        if (!cancelled) setPublicLoanInfo(data);
+      })
+      .catch(() => {
+        if (!cancelled) setPublicLoanInfo(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [confirmToken]);
 
   const {
     register,
@@ -69,6 +105,16 @@ export function LoginForm() {
           role="alert"
         >
           Conta criada com sucesso! Faça login para continuar.
+        </div>
+      )}
+      {publicLoanInfo && (
+        <div
+          className="mb-4 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm"
+          role="note"
+        >
+          Você está entrando para confirmar o empréstimo de{" "}
+          <strong>{publicLoanInfo.itemName}</strong> com{" "}
+          <strong>{publicLoanInfo.lenderName}</strong>.
         </div>
       )}
 
@@ -144,7 +190,7 @@ export function LoginForm() {
 
         <p className="text-center text-sm text-muted-foreground">
           Não tem uma conta?{" "}
-          <Link href="/register" className="text-primary hover:underline">
+          <Link href={registerHref} className="text-primary hover:underline">
             Cadastre-se
           </Link>
         </p>

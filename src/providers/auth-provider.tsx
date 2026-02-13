@@ -18,7 +18,12 @@ type AuthContextType = {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string, redirectTo?: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    redirectToLogin?: string
+  ) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
@@ -74,9 +79,14 @@ export function AuthProvider({
   );
 
   const register = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (
+      name: string,
+      email: string,
+      password: string,
+      redirectToLogin = "/login?registered=true"
+    ) => {
       await apiRegister(name, email, password);
-      router.push("/login?registered=true");
+      router.push(redirectToLogin);
     },
     [router]
   );
