@@ -44,6 +44,12 @@ export type CreateItemInput = {
   images?: string[];
 };
 
+export type UpdateItemInput = {
+  name?: string;
+  description?: string;
+  images?: string[];
+};
+
 // Loan types
 export type LoanStatus = "pending" | "confirmed" | "returned" | "cancelled";
 

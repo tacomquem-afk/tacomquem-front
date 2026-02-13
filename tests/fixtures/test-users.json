@@ -4,6 +4,13 @@
   "api_base_url": "http://localhost:3333",
   "users": [
     {
+      "email": "admin.test@example.com",
+      "password": "AdminTest@123456",
+      "name": "Admin Test",
+      "id": "19c3d4c2-c215-4f38-9288-dddbe754e2d0",
+      "email_verified": true
+    },
+    {
       "email": "test1@example.com",
       "password": "Test@123456",
       "name": "Test User 1",
@@ -36,13 +43,6 @@
       "password": "Test@567890",
       "name": "Test User 5",
       "id": "e883b4b8-1f1b-4c1b-9138-17d20f0092ed",
-      "email_verified": true
-    },
-    {
-      "email": "admin.test@example.com",
-      "password": "AdminTest@123456",
-      "name": "Admin Test",
-      "id": "19c3d4c2-c215-4f38-9288-dddbe754e2d0",
       "email_verified": true
     },
     {
