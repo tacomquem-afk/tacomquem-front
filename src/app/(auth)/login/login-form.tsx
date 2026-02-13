@@ -27,6 +27,9 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const registered = searchParams.get("registered") === "true";
+  const nextParam = searchParams.get("next");
+  const redirectTo =
+    nextParam?.startsWith("/") ? nextParam : "/dashboard";
 
   const {
     register,
@@ -46,7 +49,7 @@ export function LoginForm() {
     setError(null);
 
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.password, redirectTo);
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.error ?? "Erro ao fazer login. Tente novamente.");

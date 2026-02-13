@@ -1,9 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type { Loan, LoanListFilter } from "@/types";
+import type { CreateLoanInput, Loan, LoanListFilter } from "@/types";
 
 type LoansResponse = {
   loans: Loan[];
+};
+
+type CreateLoanResponse = {
+  loan: Loan;
+  confirmUrl: string;
 };
 
 export function useLoans(filter?: LoanListFilter) {
@@ -26,6 +31,21 @@ export function useLoan(id: string) {
       return data.loan;
     },
     enabled: !!id,
+  });
+}
+
+export function useCreateLoan() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateLoanInput) => {
+      return api.post<CreateLoanResponse>("/api/loans/", input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["loans"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
   });
 }
 

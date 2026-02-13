@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { CreateLoanDialog } from "@/components/dashboard/create-loan-dialog";
 import { EditItemDialog } from "@/components/dashboard/edit-item-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const itemImage = item.images[0];
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [loanOpen, setLoanOpen] = useState(false);
 
   const deleteItem = useDeleteItem();
 
@@ -140,14 +142,21 @@ export function ItemCard({ item }: ItemCardProps) {
 
           {/* Actions */}
           <CardFooter className="p-4 pt-0">
-            <Button variant="outline" size="sm" className="w-full">
-              Emprestar
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={() => setLoanOpen(true)}
+              disabled={!item.isActive}
+            >
+              {item.isActive ? "Emprestar" : "Item inativo"}
             </Button>
           </CardFooter>
         </Card>
       </motion.div>
 
       <EditItemDialog item={item} open={editOpen} onOpenChange={setEditOpen} />
+      <CreateLoanDialog item={item} open={loanOpen} onOpenChange={setLoanOpen} />
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
