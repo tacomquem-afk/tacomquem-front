@@ -968,6 +968,23 @@
                           "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
+                        "isLoaned": { "type": "boolean" },
+                        "currentLoanId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
+                        "borrowedTo": {
+                          "anyOf": [
+                            { "type": "string" },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -985,6 +1002,9 @@
                         "description",
                         "images",
                         "isActive",
+                        "isLoaned",
+                        "currentLoanId",
+                        "borrowedTo",
                         "createdAt",
                         "updatedAt"
                       ],
@@ -1111,6 +1131,23 @@
                             "items": { "type": "string" }
                           },
                           "isActive": { "type": "boolean" },
+                          "isLoaned": { "type": "boolean" },
+                          "currentLoanId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "borrowedTo": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -1128,6 +1165,9 @@
                           "description",
                           "images",
                           "isActive",
+                          "isLoaned",
+                          "currentLoanId",
+                          "borrowedTo",
                           "createdAt",
                           "updatedAt"
                         ],
@@ -1228,6 +1268,23 @@
                           "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
+                        "isLoaned": { "type": "boolean" },
+                        "currentLoanId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
+                        "borrowedTo": {
+                          "anyOf": [
+                            { "type": "string" },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -1245,6 +1302,9 @@
                         "description",
                         "images",
                         "isActive",
+                        "isLoaned",
+                        "currentLoanId",
+                        "borrowedTo",
                         "createdAt",
                         "updatedAt"
                       ],
@@ -1402,6 +1462,23 @@
                           "items": { "type": "string" }
                         },
                         "isActive": { "type": "boolean" },
+                        "isLoaned": { "type": "boolean" },
+                        "currentLoanId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
+                        "borrowedTo": {
+                          "anyOf": [
+                            { "type": "string" },
+                            { "nullable": true, "enum": [null] }
+                          ]
+                        },
                         "createdAt": {
                           "type": "string",
                           "format": "date-time",
@@ -1419,6 +1496,9 @@
                         "description",
                         "images",
                         "isActive",
+                        "isLoaned",
+                        "currentLoanId",
+                        "borrowedTo",
                         "createdAt",
                         "updatedAt"
                       ],
@@ -2337,6 +2417,232 @@
                     }
                   },
                   "required": ["loans"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/history": {
+      "get": {
+        "tags": ["Loans"],
+        "description": "List completed loans (returned/cancelled) with direction filter and tab counts",
+        "parameters": [
+          {
+            "schema": {
+              "default": "all",
+              "type": "string",
+              "enum": ["all", "lent", "borrowed"]
+            },
+            "in": "query",
+            "name": "direction",
+            "required": false
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "loans": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "item": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": { "type": "string" },
+                              "images": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              }
+                            },
+                            "required": ["id", "name", "images"],
+                            "additionalProperties": false
+                          },
+                          "lender": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": { "type": "string" }
+                            },
+                            "required": ["id", "name"],
+                            "additionalProperties": false
+                          },
+                          "borrower": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                  },
+                                  "name": { "type": "string" }
+                                },
+                                "required": ["id", "name"],
+                                "additionalProperties": false
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "borrowerEmail": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "email",
+                                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "confirmed",
+                              "returned",
+                              "cancelled"
+                            ]
+                          },
+                          "expectedReturnDate": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "lenderNotes": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "borrowerNotes": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "confirmedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "returnedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "item",
+                          "lender",
+                          "borrower",
+                          "borrowerEmail",
+                          "status",
+                          "expectedReturnDate",
+                          "lenderNotes",
+                          "borrowerNotes",
+                          "confirmedAt",
+                          "returnedAt",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "counts": {
+                      "type": "object",
+                      "properties": {
+                        "all": { "type": "number" },
+                        "lent": { "type": "number" },
+                        "borrowed": { "type": "number" }
+                      },
+                      "required": ["all", "lent", "borrowed"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["loans", "counts"],
                   "additionalProperties": false
                 }
               }
@@ -3646,43 +3952,7 @@
                         "additionalProperties": false
                       }
                     },
-                    "pendingLoans": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          },
-                          "itemName": { "type": "string" },
-                          "borrowerEmail": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "format": "email",
-                                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
-                              },
-                              { "nullable": true, "enum": [null] }
-                            ]
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "itemName",
-                          "borrowerEmail",
-                          "createdAt"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "activeLoans": {
+                    "loans": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -3697,7 +3967,16 @@
                             "type": "array",
                             "items": { "type": "string" }
                           },
-                          "otherParty": { "type": "string" },
+                          "status": {
+                            "type": "string",
+                            "enum": ["pending", "confirmed"]
+                          },
+                          "otherParty": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
                           "role": {
                             "type": "string",
                             "enum": ["lender", "borrower"]
@@ -3712,31 +3991,38 @@
                               { "nullable": true, "enum": [null] }
                             ]
                           },
-                          "confirmedAt": {
+                          "createdAt": {
                             "type": "string",
                             "format": "date-time",
                             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                          },
+                          "confirmedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
                           }
                         },
                         "required": [
                           "id",
                           "itemName",
                           "itemImages",
+                          "status",
                           "otherParty",
                           "role",
                           "expectedReturnDate",
+                          "createdAt",
                           "confirmedAt"
                         ],
                         "additionalProperties": false
                       }
                     }
                   },
-                  "required": [
-                    "stats",
-                    "recentActivity",
-                    "pendingLoans",
-                    "activeLoans"
-                  ],
+                  "required": ["stats", "recentActivity", "loans"],
                   "additionalProperties": false
                 }
               }
@@ -4843,6 +5129,23 @@
                             "items": { "type": "string" }
                           },
                           "isActive": { "type": "boolean" },
+                          "isLoaned": { "type": "boolean" },
+                          "currentLoanId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "borrowedTo": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -4860,6 +5163,9 @@
                           "description",
                           "images",
                           "isActive",
+                          "isLoaned",
+                          "currentLoanId",
+                          "borrowedTo",
                           "createdAt",
                           "updatedAt"
                         ],

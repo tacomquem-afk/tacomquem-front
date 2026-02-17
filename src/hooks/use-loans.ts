@@ -1,6 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type { CreateLoanInput, Loan, LoanListFilter } from "@/types";
+import type {
+  CreateLoanInput,
+  Loan,
+  LoanListFilter,
+  LoansHistoryDirection,
+  LoansHistoryResponse,
+} from "@/types";
 
 type LoansResponse = {
   loans: Loan[];
@@ -18,6 +24,20 @@ export function useLoans(filter?: LoanListFilter) {
       const params = filter ? `?filter=${filter}` : "";
       const data = await api.get<LoansResponse>(`/api/loans/${params}`);
       return data.loans;
+    },
+    staleTime: 60 * 1000, // 1min
+  });
+}
+
+export function useLoansHistory(direction: LoansHistoryDirection = "all") {
+  return useQuery({
+    queryKey: ["loans-history", direction],
+    queryFn: async () => {
+      const params = `?direction=${direction}`;
+      const data = await api.get<LoansHistoryResponse>(
+        `/api/loans/history${params}`
+      );
+      return data;
     },
     staleTime: 60 * 1000, // 1min
   });

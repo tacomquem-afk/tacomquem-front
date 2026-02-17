@@ -11,12 +11,12 @@ import {
   Package,
 } from "lucide-react";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useLoans } from "@/hooks/use-loans";
+import { useLoansHistory } from "@/hooks/use-loans";
 import { useAuth } from "@/providers/auth-provider";
 import type { Loan } from "@/types";
 
@@ -24,9 +24,13 @@ function groupByMonth(loans: Loan[]): Array<{ label: string; loans: Loan[] }> {
   const map = new Map<string, Loan[]>();
 
   for (const loan of loans) {
-    const key = format(new Date(loan.returnedAt ?? loan.createdAt), "MMMM 'de' yyyy", {
-      locale: ptBR,
-    });
+    const key = format(
+      new Date(loan.returnedAt ?? loan.createdAt),
+      "MMMM 'de' yyyy",
+      {
+        locale: ptBR,
+      }
+    );
     if (!map.has(key)) map.set(key, []);
     map.get(key)?.push(loan);
   }
@@ -81,12 +85,14 @@ function HistoryItem({ loan, userId }: { loan: Loan; userId: string }) {
             <AvatarImage
               src={
                 isLender
-                  ? (loan.borrower as { avatarUrl?: string | null } | null)
-                      ?.avatarUrl ?? undefined
+                  ? ((loan.borrower as { avatarUrl?: string | null } | null)
+                      ?.avatarUrl ?? undefined)
                   : undefined
               }
             />
-            <AvatarFallback className="text-[8px]">{otherInitials}</AvatarFallback>
+            <AvatarFallback className="text-[8px]">
+              {otherInitials}
+            </AvatarFallback>
           </Avatar>
           <span className="text-xs text-muted-foreground truncate">
             {isLender ? "Para " : "De "}
@@ -205,19 +211,14 @@ function HistorySkeletons() {
 
 export default function HistoryPage() {
   const { user } = useAuth();
-  const { data: loans, isLoading } = useLoans("returned");
+  const [direction, setDirection] = useState<"all" | "lent" | "borrowed">(
+    "all"
+  );
+  const { data: historyData, isLoading } = useLoansHistory(direction);
 
   const userId = user?.id ?? "";
-
-  const lentLoans = useMemo(
-    () => (loans ?? []).filter((l) => l.lender.id === userId),
-    [loans, userId]
-  );
-
-  const borrowedLoans = useMemo(
-    () => (loans ?? []).filter((l) => l.lender.id !== userId),
-    [loans, userId]
-  );
+  const loans = historyData?.loans ?? [];
+  const counts = historyData?.counts ?? { all: 0, lent: 0, borrowed: 0 };
 
   return (
     <div className="space-y-10">
@@ -229,37 +230,40 @@ export default function HistoryPage() {
             Todos os empréstimos já concluídos.
           </p>
         </div>
-        {!isLoading && loans && loans.length > 0 && (
+        {!isLoading && counts.all > 0 && (
           <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-800 border border-border-700 text-sm">
             <CheckCircle className="size-4 text-accent-green" />
-            <span className="font-medium">{loans.length}</span>
+            <span className="font-medium">{counts.all}</span>
             <span className="text-muted-foreground">concluídos</span>
           </div>
         )}
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="all">
+      <Tabs
+        value={direction}
+        onValueChange={(v) => setDirection(v as typeof direction)}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="all" className="gap-2">
             <History className="size-4" />
             Todos
-            {!isLoading && loans && (
-              <span className="text-xs opacity-60">({loans.length})</span>
+            {!isLoading && (
+              <span className="text-xs opacity-60">({counts.all})</span>
             )}
           </TabsTrigger>
           <TabsTrigger value="lent" className="gap-2">
             <ArrowUpRight className="size-4" />
             Emprestei
             {!isLoading && (
-              <span className="text-xs opacity-60">({lentLoans.length})</span>
+              <span className="text-xs opacity-60">({counts.lent})</span>
             )}
           </TabsTrigger>
           <TabsTrigger value="borrowed" className="gap-2">
             <ArrowDownLeft className="size-4" />
             Peguei
             {!isLoading && (
-              <span className="text-xs opacity-60">({borrowedLoans.length})</span>
+              <span className="text-xs opacity-60">({counts.borrowed})</span>
             )}
           </TabsTrigger>
         </TabsList>
@@ -269,7 +273,7 @@ export default function HistoryPage() {
             <HistorySkeletons />
           ) : (
             <HistoryList
-              loans={loans ?? []}
+              loans={loans}
               userId={userId}
               emptyLabel="Nenhum empréstimo concluído"
             />
@@ -281,7 +285,7 @@ export default function HistoryPage() {
             <HistorySkeletons />
           ) : (
             <HistoryList
-              loans={lentLoans}
+              loans={loans}
               userId={userId}
               emptyLabel="Nenhum item emprestado concluído"
             />
@@ -293,7 +297,7 @@ export default function HistoryPage() {
             <HistorySkeletons />
           ) : (
             <HistoryList
-              loans={borrowedLoans}
+              loans={loans}
               userId={userId}
               emptyLabel="Nenhum item pegado emprestado concluído"
             />

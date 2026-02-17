@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { api, type ApiError } from "@/lib/api/client";
+import { type ApiError, api } from "@/lib/api/client";
 import { type LoginFormData, loginSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/providers/auth-provider";
 
@@ -44,7 +44,9 @@ export function LoginForm() {
     const token = safeNextParam.slice("/confirm-loan/".length).split("?")[0];
     return token || null;
   }, [safeNextParam]);
-  const [publicLoanInfo, setPublicLoanInfo] = useState<PublicLoanInfo | null>(null);
+  const [publicLoanInfo, setPublicLoanInfo] = useState<PublicLoanInfo | null>(
+    null
+  );
 
   useEffect(() => {
     if (!confirmToken) {

@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Loader2, MoreVertical, Package, Pencil, Trash2 } from "lucide-react";
+import { Clock, Loader2, MoreVertical, Package, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDeleteItem } from "@/hooks/use-items";
+import { useLoans } from "@/hooks/use-loans";
 import type { Item } from "@/types";
 
 type ItemCardProps = {
@@ -41,7 +42,13 @@ export function ItemCard({ item }: ItemCardProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [loanOpen, setLoanOpen] = useState(false);
 
+  const { data: loans } = useLoans("lent");
   const deleteItem = useDeleteItem();
+
+  // Check if item has an active loan
+  const hasActiveLoan = loans?.some(
+    (loan) => loan.item.id === item.id && loan.status !== "returned"
+  );
 
   const handleDelete = async () => {
     try {
@@ -65,10 +72,21 @@ export function ItemCard({ item }: ItemCardProps) {
           {/* Image */}
           <div className="relative h-48 w-full overflow-hidden">
             <Badge
-              variant={item.isActive ? "success" : "destructive"}
-              className="absolute top-3 left-3 z-10 gap-1"
+              variant={
+                !item.isActive
+                  ? "destructive"
+                  : hasActiveLoan
+                    ? "warning"
+                    : "success"
+              }
+              className="absolute top-3 left-3 z-10 gap-1 flex items-center"
             >
-              {item.isActive ? "Disponível" : "Inativo"}
+              {hasActiveLoan && <Clock className="size-3" />}
+              {!item.isActive
+                ? "Inativo"
+                : hasActiveLoan
+                  ? "Emprestado"
+                  : "Disponível"}
             </Badge>
 
             {/* Actions dropdown */}
@@ -147,16 +165,24 @@ export function ItemCard({ item }: ItemCardProps) {
               size="sm"
               className="w-full"
               onClick={() => setLoanOpen(true)}
-              disabled={!item.isActive}
+              disabled={!item.isActive || hasActiveLoan}
             >
-              {item.isActive ? "Emprestar" : "Item inativo"}
+              {!item.isActive
+                ? "Item inativo"
+                : hasActiveLoan
+                  ? "Item emprestado"
+                  : "Emprestar"}
             </Button>
           </CardFooter>
         </Card>
       </motion.div>
 
       <EditItemDialog item={item} open={editOpen} onOpenChange={setEditOpen} />
-      <CreateLoanDialog item={item} open={loanOpen} onOpenChange={setLoanOpen} />
+      <CreateLoanDialog
+        item={item}
+        open={loanOpen}
+        onOpenChange={setLoanOpen}
+      />
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>

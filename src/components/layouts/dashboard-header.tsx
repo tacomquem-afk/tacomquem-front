@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Menu, Plus, Search } from "lucide-react";
+import { Menu, Plus, Search } from "lucide-react";
+import { NotificationsDropdown } from "@/components/dashboard/notifications-dropdown";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,10 +44,7 @@ export function DashboardHeader() {
       {/* Actions */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <Button variant="outline" size="icon" className="relative">
-          <Bell className="size-4" />
-          <span className="absolute top-1 right-1 size-2 bg-red-500 rounded-full" />
-        </Button>
+        <NotificationsDropdown />
 
         {/* CTA Button (desktop) */}
         <Button className="hidden sm:flex gap-2">

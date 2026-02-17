@@ -17,7 +17,11 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    redirectTo?: string
+  ) => Promise<void>;
   register: (
     name: string,
     email: string,

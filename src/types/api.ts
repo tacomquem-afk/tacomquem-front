@@ -135,3 +135,17 @@ export type Friend = {
   lentCount: number;
   borrowedCount: number;
 };
+
+// Loans History types
+export type LoansHistoryDirection = "all" | "lent" | "borrowed";
+
+export type LoansHistoryCounts = {
+  all: number;
+  lent: number;
+  borrowed: number;
+};
+
+export type LoansHistoryResponse = {
+  loans: Loan[];
+  counts: LoansHistoryCounts;
+};

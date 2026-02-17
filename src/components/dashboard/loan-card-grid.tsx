@@ -18,6 +18,9 @@ export function LoanCardGrid({
   const { data: loans, isLoading } = useLoans(filter);
   const isBorrowed = filter === "borrowed";
 
+  // Filter out returned loans from both views
+  const filteredLoans = loans?.filter((loan) => loan.status !== "returned");
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -28,7 +31,7 @@ export function LoanCardGrid({
     );
   }
 
-  if (!loans || loans.length === 0) {
+  if (!filteredLoans || filteredLoans.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-700 rounded-2xl">
         <Package className="size-12 text-muted-foreground mb-4" />
@@ -50,7 +53,7 @@ export function LoanCardGrid({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {loans.map((loan) => (
+      {filteredLoans.map((loan) => (
         <LoanCard
           key={loan.id}
           loan={loan}
