@@ -35,7 +35,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useItems } from "@/hooks/use-items";
 import { useCreateLoan, useLoans } from "@/hooks/use-loans";
-import type { ApiError, Item } from "@/lib/api/client";
+import type { ApiError } from "@/lib/api/client";
+import type { Item } from "@/types";
 import {
   type CreateLoanFormData,
   createLoanSchema,
@@ -131,6 +132,13 @@ export function RegisterLoanDialog({
   };
 
   const onSubmit = async (data: CreateLoanFormData) => {
+    if (!selectedItem) {
+      setError("root", {
+        message: "Selecione um item para criar o empréstimo.",
+      });
+      return;
+    }
+
     try {
       const response = await createLoan.mutateAsync({
         itemId: selectedItem.id,
@@ -317,30 +325,32 @@ export function RegisterLoanDialog({
           {step === 2 && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Selected item preview */}
-              <div className="flex items-center gap-3 p-3 rounded-lg border border-border-700 bg-surface-900">
-                {selectedItem.images[0] ? (
-                  <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0">
-                    <Image
-                      src={selectedItem.images[0]}
-                      alt={selectedItem.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-16 w-16 rounded-md bg-surface-800 flex items-center justify-center shrink-0">
-                    <Package className="size-8 text-muted-foreground" />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium">{selectedItem.name}</p>
-                  {selectedItem.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {selectedItem.description}
-                    </p>
+              {selectedItem && (
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-border-700 bg-surface-900">
+                  {selectedItem.images[0] ? (
+                    <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0">
+                      <Image
+                        src={selectedItem.images[0]}
+                        alt={selectedItem.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-16 w-16 rounded-md bg-surface-800 flex items-center justify-center shrink-0">
+                      <Package className="size-8 text-muted-foreground" />
+                    </div>
                   )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium">{selectedItem.name}</p>
+                    {selectedItem.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {selectedItem.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="borrower-email">Email de quem vai pegar</Label>
@@ -458,7 +468,7 @@ export function RegisterLoanDialog({
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="loan-share-url">Link de confirmação</Label>
-                <Input id="loan-share-url" readOnly value={shareUrl} />
+                <Input id="loan-share-url" readOnly value={shareUrl ?? ""} />
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">

@@ -16,7 +16,8 @@ export async function waitForToast(
     .or(page.locator('[role="status"]'))
     .first();
   await toast.waitFor({ timeout });
-  return toast.textContent() || "";
+  const text = await toast.textContent();
+  return text ?? "";
 }
 
 /**
