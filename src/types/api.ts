@@ -118,6 +118,32 @@ export type DashboardRecentActivity = {
   read: boolean;
 };
 
+export type Notification = {
+  id: string;
+  loanId: string | null;
+  type: DashboardActivityType;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  sentAt: string | null;
+};
+
+export type NotificationsReadFilter = "all" | "read" | "unread";
+
+export type NotificationsPagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+export type NotificationsResponse = {
+  notifications: Notification[];
+  pagination: NotificationsPagination;
+  unreadCount: number;
+};
+
 export type DashboardPendingLoan = {
   id: string;
   itemName: string;

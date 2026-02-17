@@ -3,7 +3,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Bell, CheckCircle, CircleCheckBig, Handshake } from "lucide-react";
+import { Bell, CheckCircle, CircleCheckBig, Handshake, History } from "lucide-react";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -135,6 +136,13 @@ export function NotificationsDropdown() {
             })}
           </DropdownMenuGroup>
         )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/notifications" className="justify-center gap-2">
+            <History className="size-4" />
+            Ver histórico completo
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

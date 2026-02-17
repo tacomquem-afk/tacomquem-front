@@ -1,4 +1,5 @@
 import {
+  BellRing,
   Handshake,
   History,
   LayoutDashboard,
@@ -12,6 +13,7 @@ export const dashboardNavigation = [
   { name: "Empréstimos", href: "/dashboard/loans", icon: Handshake },
   { name: "Meus Itens", href: "/dashboard/items", icon: Package },
   { name: "Histórico", href: "/dashboard/history", icon: History },
+  { name: "Notificações", href: "/dashboard/notifications", icon: BellRing },
   { name: "Amigos", href: "/dashboard/friends", icon: Users },
 ] as const;
 
