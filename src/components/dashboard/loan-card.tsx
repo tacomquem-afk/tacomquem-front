@@ -5,6 +5,17 @@ import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle, Clock, Package } from "lucide-react";
 import Image from "next/image";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -146,15 +157,50 @@ export function LoanCard({ loan, role = "lender" }: LoanCardProps) {
         {/* Actions */}
         <CardFooter className="p-4 pt-0">
           {role === "lender" && loan.status === "confirmed" ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={() => remindMutation.mutate(loan.id)}
-              disabled={remindMutation.isPending || returnMutation.isPending}
-            >
-              Solicitar Devolução
-            </Button>
+            <div className="flex w-full gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => remindMutation.mutate(loan.id)}
+                disabled={remindMutation.isPending || returnMutation.isPending}
+              >
+                Solicitar Devolução
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="flex-1"
+                    disabled={returnMutation.isPending}
+                  >
+                    {returnMutation.isPending
+                      ? "Confirmando..."
+                      : "Recebi de volta"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar que recebeu o item de volta?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Ao confirmar, o empréstimo de{" "}
+                      <strong>{loan.item.name}</strong> será finalizado.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => returnMutation.mutate(loan.id)}
+                    >
+                      Confirmar devolução
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           ) : role === "lender" && loan.status === "returned" ? (
             <Button variant="outline" size="sm" className="w-full">
               Avaliar Estado
