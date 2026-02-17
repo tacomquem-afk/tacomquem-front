@@ -3,13 +3,31 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Clock, Loader2, MoreVertical, Package, Pencil, Trash2 } from "lucide-react";
+import {
+  Clock,
+  Loader2,
+  MoreVertical,
+  Package,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { CreateLoanDialog } from "@/components/dashboard/create-loan-dialog";
 import { EditItemDialog } from "@/components/dashboard/edit-item-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -29,7 +47,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDeleteItem } from "@/hooks/use-items";
-import { useLoans } from "@/hooks/use-loans";
+import { useLoans, useRemindLoan, useReturnLoan } from "@/hooks/use-loans";
 import type { Item } from "@/types";
 
 type ItemCardProps = {
@@ -44,11 +62,14 @@ export function ItemCard({ item }: ItemCardProps) {
 
   const { data: loans } = useLoans("lent");
   const deleteItem = useDeleteItem();
+  const returnMutation = useReturnLoan();
+  const remindMutation = useRemindLoan();
 
-  // Check if item has an active loan
-  const hasActiveLoan = loans?.some(
+  // Check if item has an active loan and get the loan
+  const activeLoan = loans?.find(
     (loan) => loan.item.id === item.id && loan.status !== "returned"
   );
+  const hasActiveLoan = !!activeLoan;
 
   const handleDelete = async () => {
     try {
@@ -160,19 +181,64 @@ export function ItemCard({ item }: ItemCardProps) {
 
           {/* Actions */}
           <CardFooter className="p-4 pt-0">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={() => setLoanOpen(true)}
-              disabled={!item.isActive || hasActiveLoan}
-            >
-              {!item.isActive
-                ? "Item inativo"
-                : hasActiveLoan
-                  ? "Item emprestado"
-                  : "Emprestar"}
-            </Button>
+            {hasActiveLoan && activeLoan ? (
+              <div className="flex w-full gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => remindMutation.mutate(activeLoan.id)}
+                  disabled={
+                    remindMutation.isPending || returnMutation.isPending
+                  }
+                >
+                  Solicitar Devolução
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1"
+                      disabled={returnMutation.isPending}
+                    >
+                      {returnMutation.isPending
+                        ? "Confirmando..."
+                        : "Recebi de volta"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Confirmar que recebeu o item de volta?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Ao confirmar, o empréstimo de{" "}
+                        <strong>{item.name}</strong> será finalizado.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => returnMutation.mutate(activeLoan.id)}
+                      >
+                        Confirmar devolução
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setLoanOpen(true)}
+                disabled={!item.isActive}
+              >
+                {!item.isActive ? "Item inativo" : "Emprestar"}
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </motion.div>

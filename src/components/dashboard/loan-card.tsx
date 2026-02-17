@@ -202,12 +202,7 @@ export function LoanCard({ loan, role = "lender" }: LoanCardProps) {
               </AlertDialog>
             </div>
           ) : role === "borrower" && loan.status === "confirmed" ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              className="w-full"
-              disabled
-            >
+            <Button variant="secondary" size="sm" className="w-full" disabled>
               Pronto para devolver
             </Button>
           ) : role === "lender" && loan.status === "returned" ? (
