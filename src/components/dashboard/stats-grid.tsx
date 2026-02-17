@@ -1,6 +1,6 @@
-import { Package, ArrowUpRight, ArrowDownLeft } from "lucide-react";
-import { StatCard, StatCardSkeleton } from "./stat-card";
+import { ArrowDownLeft, ArrowUpRight, Package } from "lucide-react";
 import { useDashboard } from "@/hooks/use-dashboard";
+import { StatCard, StatCardSkeleton } from "./stat-card";
 
 export function StatsGrid() {
   const { data, isLoading } = useDashboard();

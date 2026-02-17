@@ -1,24 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, Lock } from "lucide-react";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { SocialLoginButton } from "@/components/auth/social-login-button";
-import { PasswordInput } from "@/components/forms/password-input";
 import { FormError } from "@/components/forms/form-error";
-import { Divider } from "@/components/ui/divider";
+import { PasswordInput } from "@/components/forms/password-input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { type ApiError, api } from "@/lib/api/client";
+import { type LoginFormData, loginSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/providers/auth-provider";
-import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
-import type { ApiError } from "@/lib/api/client";
+import type { PublicLoanInfo } from "@/types";
 
 export function LoginForm() {
   const searchParams = useSearchParams();
@@ -27,6 +28,41 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const registered = searchParams.get("registered") === "true";
+  const nextParam = searchParams.get("next");
+  const safeNextParam = nextParam?.startsWith("/") ? nextParam : null;
+  const redirectTo = safeNextParam ?? "/dashboard";
+  const registerHref = safeNextParam
+    ? `/register?next=${encodeURIComponent(safeNextParam)}`
+    : "/register";
+  const confirmToken = useMemo(() => {
+    if (!safeNextParam?.startsWith("/confirm-loan/")) return null;
+    const token = safeNextParam.slice("/confirm-loan/".length).split("?")[0];
+    return token || null;
+  }, [safeNextParam]);
+  const [publicLoanInfo, setPublicLoanInfo] = useState<PublicLoanInfo | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!confirmToken) {
+      setPublicLoanInfo(null);
+      return;
+    }
+
+    let cancelled = false;
+    api
+      .get<PublicLoanInfo>(`/api/links/${confirmToken}`, { skipAuth: true })
+      .then((data) => {
+        if (!cancelled) setPublicLoanInfo(data);
+      })
+      .catch(() => {
+        if (!cancelled) setPublicLoanInfo(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [confirmToken]);
 
   const {
     register,
@@ -46,7 +82,7 @@ export function LoginForm() {
     setError(null);
 
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.password, redirectTo);
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.error ?? "Erro ao fazer login. Tente novamente.");
@@ -66,6 +102,16 @@ export function LoginForm() {
           role="alert"
         >
           Conta criada com sucesso! Faça login para continuar.
+        </div>
+      )}
+      {publicLoanInfo && (
+        <div
+          className="mb-4 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm"
+          role="note"
+        >
+          Você está entrando para confirmar o empréstimo de{" "}
+          <strong>{publicLoanInfo.itemName}</strong> com{" "}
+          <strong>{publicLoanInfo.lenderName}</strong>.
         </div>
       )}
 
@@ -141,7 +187,7 @@ export function LoginForm() {
 
         <p className="text-center text-sm text-muted-foreground">
           Não tem uma conta?{" "}
-          <Link href="/register" className="text-primary hover:underline">
+          <Link href={registerHref} className="text-primary hover:underline">
             Cadastre-se
           </Link>
         </p>

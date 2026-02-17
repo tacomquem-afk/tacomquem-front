@@ -1,26 +1,48 @@
 "use client";
 
-import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, CheckCircle, Clock, Package } from "lucide-react";
+import Image from "next/image";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useReturnLoan, useRemindLoan } from "@/hooks/use-loans";
-import { Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useRemindLoan, useReturnLoan } from "@/hooks/use-loans";
 import type { Loan, LoanStatus } from "@/types";
 
 type LoanCardProps = {
   loan: Loan;
+  role?: "lender" | "borrower";
 };
 
-export function LoanCard({ loan }: LoanCardProps) {
+export function LoanCard({ loan, role = "lender" }: LoanCardProps) {
   const returnMutation = useReturnLoan();
   const remindMutation = useRemindLoan();
   const itemImage = loan.item.images[0];
+  const counterpart = role === "borrower" ? loan.lender : loan.borrower;
+  const counterpartName =
+    counterpart?.name ??
+    (role === "lender" ? (loan.borrowerEmail ?? "—") : "—");
+  const counterpartInitials =
+    counterpartName
+      .split(" ")
+      .map((part) => part.trim()[0] ?? "")
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
 
   const statusConfig: Record<
     LoanStatus,
@@ -108,21 +130,24 @@ export function LoanCard({ loan }: LoanCardProps) {
             {loan.item?.name ?? "Item"}
           </h3>
 
-          {loan.borrower && (
+          {counterpartName && (
             <div className="flex items-center gap-2">
               <Avatar className="size-6 border border-border-700">
-                <AvatarImage src={loan.borrower.avatarUrl ?? undefined} />
+                <AvatarImage src={counterpart?.avatarUrl ?? undefined} />
                 <AvatarFallback className="text-xs">
-                  {loan.borrower.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
+                  {counterpartInitials}
                 </AvatarFallback>
               </Avatar>
               <span className="text-sm text-muted-foreground">
-                {loan.status === "returned" ? "Estava com " : "Com "}
+                {role === "borrower"
+                  ? loan.status === "returned"
+                    ? "Devolvido para "
+                    : "Emprestado por "
+                  : loan.status === "returned"
+                    ? "Estava com "
+                    : "Com "}
                 <span className="font-medium text-foreground">
-                  {loan.borrower.name}
+                  {counterpartName}
                 </span>
               </span>
             </div>
@@ -131,17 +156,56 @@ export function LoanCard({ loan }: LoanCardProps) {
 
         {/* Actions */}
         <CardFooter className="p-4 pt-0">
-          {loan.status === "confirmed" ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={() => remindMutation.mutate(loan.id)}
-              disabled={remindMutation.isPending || returnMutation.isPending}
-            >
-              Solicitar Devolução
+          {role === "lender" && loan.status === "confirmed" ? (
+            <div className="flex w-full gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => remindMutation.mutate(loan.id)}
+                disabled={remindMutation.isPending || returnMutation.isPending}
+              >
+                Solicitar Devolução
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="flex-1"
+                    disabled={returnMutation.isPending}
+                  >
+                    {returnMutation.isPending
+                      ? "Confirmando..."
+                      : "Recebi de volta"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Confirmar que recebeu o item de volta?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Ao confirmar, o empréstimo de{" "}
+                      <strong>{loan.item.name}</strong> será finalizado.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => returnMutation.mutate(loan.id)}
+                    >
+                      Confirmar devolução
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          ) : role === "borrower" && loan.status === "confirmed" ? (
+            <Button variant="secondary" size="sm" className="w-full" disabled>
+              Pronto para devolver
             </Button>
-          ) : loan.status === "returned" ? (
+          ) : role === "lender" && loan.status === "returned" ? (
             <Button variant="outline" size="sm" className="w-full">
               Avaliar Estado
             </Button>

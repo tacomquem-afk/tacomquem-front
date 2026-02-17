@@ -13,6 +13,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Nunca mais esqueça seus empréstimos",
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const authComingSoonMessage =
+    "Login e cadastro em breve. Estamos finalizando os detalhes.";
+
   return (
     <main className="flex min-h-screen flex-col bg-[#101922] text-white overflow-x-hidden font-sans selection:bg-[#2b8cee] selection:text-white">
       {/* Navbar */}
@@ -57,23 +61,33 @@ export default function HomePage() {
             >
               Benefícios
             </Link>
-            <Link href="/login" className="hover:text-white transition-colors">
-              Entrar
-            </Link>
+            {config.authEnabled && (
+              <Link href="/login" className="hover:text-white transition-colors">
+                Entrar
+              </Link>
+            )}
           </nav>
           <div className="flex items-center gap-3 md:gap-4">
-            <Link
-              href="/login"
-              className="md:hidden text-xs md:text-sm font-medium text-slate-300 hover:text-white whitespace-nowrap"
-            >
-              Entrar
-            </Link>
-            <Button
-              asChild
-              className="rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold px-4 md:px-6 py-1 md:py-2 text-[10px] sm:text-xs md:text-base shadow-lg shadow-blue-500/20 transition-all hover:scale-105 h-9 md:h-10"
-            >
-              <Link href="/register">Começar Grátis</Link>
-            </Button>
+            {config.authEnabled && (
+              <Link
+                href="/login"
+                className="md:hidden text-xs md:text-sm font-medium text-slate-300 hover:text-white whitespace-nowrap"
+              >
+                Entrar
+              </Link>
+            )}
+            {config.authEnabled ? (
+              <Button
+                asChild
+                className="rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold px-4 md:px-6 py-1 md:py-2 text-[10px] sm:text-xs md:text-base shadow-lg shadow-blue-500/20 transition-all hover:scale-105 h-9 md:h-10"
+              >
+                <Link href="/register">Começar Grátis</Link>
+              </Button>
+            ) : (
+              <span className="rounded-full border border-[#2b8cee]/40 bg-[#2b8cee]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#8bc4ff] md:px-4 md:text-xs">
+                Em breve
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -100,13 +114,19 @@ export default function HomePage() {
             Simples, rápido e sem constrangimentos.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 md:mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-            <Button
-              asChild
-              size="lg"
-              className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-12 md:h-14 px-8 text-base md:text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
-            >
-              <Link href="/register">👉 Começar agora</Link>
-            </Button>
+            {config.authEnabled ? (
+              <Button
+                asChild
+                size="lg"
+                className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-12 md:h-14 px-8 text-base md:text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
+              >
+                <Link href="/register">👉 Começar agora</Link>
+              </Button>
+            ) : (
+              <div className="w-full sm:w-auto rounded-full border border-[#2b8cee]/40 bg-[#2b8cee]/10 px-8 py-3 text-center text-sm font-semibold text-[#8bc4ff] md:h-14 md:px-10 md:py-4 md:text-base">
+                Cadastro em breve
+              </div>
+            )}
             <Button
               asChild
               variant="outline"
@@ -116,6 +136,11 @@ export default function HomePage() {
               <Link href="#como-funciona">Ver como funciona</Link>
             </Button>
           </div>
+          {!config.authEnabled ? (
+            <p className="-mt-10 mb-12 text-center text-sm text-slate-400">
+              {authComingSoonMessage}
+            </p>
+          ) : null}
 
           {/* Mockup Replication */}
           <div className="relative mx-auto max-w-5xl [perspective:1000px] animate-in fade-in zoom-in duration-1000 delay-500">
@@ -487,18 +512,29 @@ export default function HomePage() {
             Resgate a confiança nas suas relações e mantenha suas coisas
             seguras.
           </p>
-          <div className="flex flex-col items-center gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="w-full md:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-16 px-10 text-xl shadow-2xl shadow-blue-500/40 transition-all hover:scale-105"
-            >
-              <Link href="/register">Começar Agora Gratuitamente</Link>
-            </Button>
-            <p className="text-sm text-slate-500">
-              Sem cartão de crédito necessário
-            </p>
-          </div>
+          {config.authEnabled ? (
+            <div className="flex flex-col items-center gap-4">
+              <Button
+                asChild
+                size="lg"
+                className="w-full md:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-16 px-10 text-xl shadow-2xl shadow-blue-500/40 transition-all hover:scale-105"
+              >
+                <Link href="/register">Começar Agora Gratuitamente</Link>
+              </Button>
+              <p className="text-sm text-slate-500">
+                Sem cartão de crédito necessário
+              </p>
+            </div>
+          ) : (
+            <div className="mx-auto max-w-xl rounded-2xl border border-[#2b8cee]/30 bg-[#2b8cee]/10 px-6 py-5">
+              <p className="text-base font-semibold text-[#8bc4ff]">
+                Funcionalidade em breve
+              </p>
+              <p className="mt-2 text-sm text-slate-300">
+                {authComingSoonMessage}
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

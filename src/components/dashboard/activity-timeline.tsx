@@ -1,11 +1,12 @@
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bell, CheckCircle, CircleCheckBig, Handshake } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { cn } from "@/lib/utils";
-import { Handshake, CheckCircle, Bell, CircleCheckBig } from "lucide-react";
 
 const iconMap = {
   loan_created: Handshake,
@@ -77,8 +78,13 @@ export function ActivityTimeline() {
           </div>
         )}
 
-        <Button variant="ghost" size="sm" className="w-full mt-6 text-xs">
-          Ver histórico completo
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full mt-6 text-xs"
+          asChild
+        >
+          <Link href="/dashboard/notifications">Ver histórico completo</Link>
         </Button>
       </CardContent>
     </Card>

@@ -1,13 +1,53 @@
 "use client";
 
-import Image from "next/image";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Clock,
+  Loader2,
+  MoreVertical,
+  Package,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { CreateLoanDialog } from "@/components/dashboard/create-loan-dialog";
+import { EditItemDialog } from "@/components/dashboard/edit-item-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useDeleteItem } from "@/hooks/use-items";
+import { useLoans, useRemindLoan, useReturnLoan } from "@/hooks/use-loans";
 import type { Item } from "@/types";
 
 type ItemCardProps = {
@@ -16,70 +56,232 @@ type ItemCardProps = {
 
 export function ItemCard({ item }: ItemCardProps) {
   const itemImage = item.images[0];
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [loanOpen, setLoanOpen] = useState(false);
+
+  const { data: loans } = useLoans("lent");
+  const deleteItem = useDeleteItem();
+  const returnMutation = useReturnLoan();
+  const remindMutation = useRemindLoan();
+
+  // Check if item has an active loan and get the loan
+  const activeLoan = loans?.find(
+    (loan) => loan.item.id === item.id && loan.status !== "returned"
+  );
+  const hasActiveLoan = !!activeLoan;
+
+  const handleDelete = async () => {
+    try {
+      await deleteItem.mutateAsync(item.id);
+      toast.success("Item excluído com sucesso!");
+      setDeleteOpen(false);
+    } catch {
+      toast.error("Erro ao excluir item. Tente novamente.");
+    }
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Card className="group overflow-hidden border-border-700 hover:shadow-xl hover:shadow-black/20 transition-shadow">
-        {/* Image */}
-        <div className="relative h-48 w-full overflow-hidden">
-          <Badge
-            variant={item.isActive ? "success" : "destructive"}
-            className="absolute top-3 left-3 z-10 gap-1"
-          >
-            {item.isActive ? "Disponível" : "Inativo"}
-          </Badge>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Card className="group overflow-hidden border-border-700 hover:shadow-xl hover:shadow-black/20 transition-shadow">
+          {/* Image */}
+          <div className="relative h-48 w-full overflow-hidden">
+            <Badge
+              variant={
+                !item.isActive
+                  ? "destructive"
+                  : hasActiveLoan
+                    ? "warning"
+                    : "success"
+              }
+              className="absolute top-3 left-3 z-10 gap-1 flex items-center"
+            >
+              {hasActiveLoan && <Clock className="size-3" />}
+              {!item.isActive
+                ? "Inativo"
+                : hasActiveLoan
+                  ? "Emprestado"
+                  : "Disponível"}
+            </Badge>
 
-          {itemImage ? (
-            <Image
-              src={itemImage}
-              alt={item.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full bg-surface-800 flex items-center justify-center">
-              <Package className="size-12 text-muted-foreground" />
+            {/* Actions dropdown */}
+            <div className="absolute top-3 right-3 z-10">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-7 w-7 bg-black/50 hover:bg-black/70 border-0 text-white"
+                    aria-label="Ações do item"
+                  >
+                    <MoreVertical className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                    <Pencil className="mr-2 size-4" />
+                    Editar
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setDeleteOpen(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="mr-2 size-4" />
+                    Excluir
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          )}
 
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+            {itemImage ? (
+              <Image
+                src={itemImage}
+                alt={item.name}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            ) : (
+              <div className="w-full h-full bg-surface-800 flex items-center justify-center">
+                <Package className="size-12 text-muted-foreground" />
+              </div>
+            )}
 
-          {/* Created date */}
-          <div className="absolute bottom-3 left-3 text-white">
-            <p className="text-xs font-medium opacity-90">
-              Cadastrado em{" "}
-              {format(new Date(item.createdAt), "d 'de' MMM, yyyy", {
-                locale: ptBR,
-              })}
-            </p>
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-60" />
+
+            {/* Created date */}
+            <div className="absolute bottom-3 left-3 text-white">
+              <p className="text-xs font-medium opacity-90">
+                Cadastrado em{" "}
+                {format(new Date(item.createdAt), "d 'de' MMM, yyyy", {
+                  locale: ptBR,
+                })}
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <CardContent className="p-4">
-          <h3 className="text-base font-bold font-display mb-1">
-            {item.name}
-          </h3>
-          {item.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {item.description}
-            </p>
-          )}
-        </CardContent>
+          {/* Content */}
+          <CardContent className="p-4">
+            <h3 className="text-base font-bold font-display mb-1">
+              {item.name}
+            </h3>
+            {item.description && (
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {item.description}
+              </p>
+            )}
+          </CardContent>
 
-        {/* Actions */}
-        <CardFooter className="p-4 pt-0">
-          <Button variant="outline" size="sm" className="w-full">
-            Emprestar
-          </Button>
-        </CardFooter>
-      </Card>
-    </motion.div>
+          {/* Actions */}
+          <CardFooter className="p-4 pt-0">
+            {hasActiveLoan && activeLoan ? (
+              <div className="flex w-full gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => remindMutation.mutate(activeLoan.id)}
+                  disabled={
+                    remindMutation.isPending || returnMutation.isPending
+                  }
+                >
+                  Solicitar Devolução
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1"
+                      disabled={returnMutation.isPending}
+                    >
+                      {returnMutation.isPending
+                        ? "Confirmando..."
+                        : "Recebi de volta"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Confirmar que recebeu o item de volta?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Ao confirmar, o empréstimo de{" "}
+                        <strong>{item.name}</strong> será finalizado.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => returnMutation.mutate(activeLoan.id)}
+                      >
+                        Confirmar devolução
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setLoanOpen(true)}
+                disabled={!item.isActive}
+              >
+                {!item.isActive ? "Item inativo" : "Emprestar"}
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
+      </motion.div>
+
+      <EditItemDialog item={item} open={editOpen} onOpenChange={setEditOpen} />
+      <CreateLoanDialog
+        item={item}
+        open={loanOpen}
+        onOpenChange={setLoanOpen}
+      />
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-display">Excluir item</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir{" "}
+              <span className="font-medium text-foreground">{item.name}</span>?
+              Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteOpen(false)}
+              disabled={deleteItem.isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteItem.isPending}
+            >
+              {deleteItem.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

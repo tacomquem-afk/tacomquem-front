@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
+import type { Metadata } from "next";
+
+import { config } from "@/lib/config";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -8,6 +10,20 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  if (!config.authEnabled) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md text-center space-y-4">
+          <h1 className="text-2xl font-bold">Autenticação Desabilitada</h1>
+          <p className="text-muted-foreground">
+            O login e cadastro ainda não estão disponíveis nesta versão.
+            Voltamos em breve.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<LoginFormSkeleton />}>
       <LoginForm />

@@ -44,9 +44,7 @@ export function setTokens(accessToken: string, refreshToken: string): void {
   if (typeof window === "undefined") return;
   localStorage.setItem("tcq_access_token", accessToken);
   localStorage.setItem("tcq_refresh_token", refreshToken);
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
   document.cookie = `tcq_access_token=${accessToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
   document.cookie = `tcq_refresh_token=${refreshToken}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
 }
 
@@ -54,9 +52,7 @@ export function clearTokens(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem("tcq_access_token");
   localStorage.removeItem("tcq_refresh_token");
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
   document.cookie = "tcq_access_token=; path=/; max-age=0";
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
   document.cookie = "tcq_refresh_token=; path=/; max-age=0";
 }
 
@@ -123,7 +119,7 @@ class ApiClient {
     } = config;
 
     const requestHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
       ...headers,
     };
 
@@ -162,7 +158,7 @@ class ApiClient {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw {
-        error: errorData.error ?? "An error occurred",
+        error: errorData.detail ?? errorData.error ?? "An error occurred",
         status: response.status,
       } as ApiError;
     }
@@ -196,6 +192,46 @@ class ApiClient {
 
   delete<T>(endpoint: string, config?: Omit<RequestConfig, "method" | "body">) {
     return this.request<T>(endpoint, { ...config, method: "DELETE" });
+  }
+
+  async upload<T>(endpoint: string, formData: FormData): Promise<T> {
+    const token = await getAccessToken();
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    let response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+
+    if (response.status === 401) {
+      const refreshed = await this.refreshAccessToken();
+      if (refreshed) {
+        const newToken = await getAccessToken();
+        if (newToken) {
+          headers.Authorization = `Bearer ${newToken}`;
+        }
+        response = await fetch(`${this.baseUrl}${endpoint}`, {
+          method: "POST",
+          headers,
+          body: formData,
+        });
+      }
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw {
+        error: errorData.detail ?? errorData.error ?? "An error occurred",
+        status: response.status,
+      } as ApiError;
+    }
+
+    return response.json();
   }
 }
 

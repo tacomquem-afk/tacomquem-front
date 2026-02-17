@@ -17,8 +17,17 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    redirectTo?: string
+  ) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    redirectToLogin?: string
+  ) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
@@ -64,19 +73,24 @@ export function AuthProvider({
   }, [initialUser, refreshUser]);
 
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, redirectTo = "/dashboard") => {
       const response = await apiLogin(email, password);
       setTokens(response.accessToken, response.refreshToken);
       setUser(response.user);
-      router.push("/dashboard");
+      router.push(redirectTo);
     },
     [router]
   );
 
   const register = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (
+      name: string,
+      email: string,
+      password: string,
+      redirectToLogin = "/login?registered=true"
+    ) => {
       await apiRegister(name, email, password);
-      router.push("/login?registered=true");
+      router.push(redirectToLogin);
     },
     [router]
   );

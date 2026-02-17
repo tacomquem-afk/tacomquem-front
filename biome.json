@@ -16,7 +16,17 @@
         "useNamingConvention": "off"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noDocumentCookie": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
+      "complexity": {
+        "noImportantStyles": "off"
+      },
+      "performance": {
+        "noImgElement": "off"
       }
     }
   },
@@ -48,5 +58,17 @@
       "cssModules": false,
       "tailwindDirectives": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["tests/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import { getCurrentUser } from "@/lib/api/auth";
 import { manrope, sourceSans } from "@/lib/fonts";
 import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
@@ -28,13 +27,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-
   return (
     <html
       lang="pt-BR"
@@ -50,7 +47,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <AuthProvider initialUser={user}>{children}</AuthProvider>
+            <AuthProvider initialUser={null}>{children}</AuthProvider>
           </QueryProvider>
           <Toaster />
         </ThemeProvider>
