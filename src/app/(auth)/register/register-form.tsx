@@ -18,12 +18,7 @@ import { Label } from "@/components/ui/label";
 import { type ApiError, api } from "@/lib/api/client";
 import { type RegisterFormData, registerSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/providers/auth-provider";
-
-type PublicLoanInfo = {
-  itemName: string;
-  itemImages: string[];
-  lenderName: string;
-};
+import type { PublicLoanInfo } from "@/types";
 
 export function RegisterForm() {
   const searchParams = useSearchParams();

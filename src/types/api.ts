@@ -81,6 +81,14 @@ export type Loan = {
   createdAt: string;
 };
 
+export type PublicLoanInfo = {
+  itemName: string;
+  itemImages: string[];
+  lenderName: string;
+  expectedReturnDate: string | null;
+  lenderNotes: string | null;
+};
+
 export type CreateLoanInput = {
   itemId: string;
   borrowerEmail: string;
