@@ -1,9 +1,14 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Bell, CheckCircle, CircleCheckBig, Handshake, History } from "lucide-react";
+import {
+  Bell,
+  CheckCircle,
+  CircleCheckBig,
+  Handshake,
+  History,
+} from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -15,8 +20,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDashboard } from "@/hooks/use-dashboard";
+import {
+  useMarkAllNotificationsAsRead,
+  useMarkNotificationAsRead,
+} from "@/hooks/use-notifications";
 import { cn } from "@/lib/utils";
-import type { DashboardRecentActivity } from "@/types";
 
 const iconMap = {
   loan_created: Handshake,
@@ -34,33 +42,21 @@ const colorMap = {
 
 export function NotificationsDropdown() {
   const { data } = useDashboard();
-  const queryClient = useQueryClient();
-  const activities = data?.recentActivity ?? [];
+  const { mutate: markAsRead } = useMarkNotificationAsRead();
+  const { mutate: markAllAsRead, isPending: isMarkingAll } =
+    useMarkAllNotificationsAsRead();
 
+  const activities = data?.recentActivity ?? [];
   const unreadCount = activities.filter((a) => !a.read).length;
 
-  const markAsRead = (activityId: string) => {
-    queryClient.setQueryData(["dashboard"], (old: unknown) => {
-      if (!old || typeof old !== "object") return old;
-      const data = old as { recentActivity: DashboardRecentActivity[] };
-      return {
-        ...data,
-        recentActivity: data.recentActivity.map((a) =>
-          a.id === activityId ? { ...a, read: true } : a
-        ),
-      };
-    });
+  const handleMarkAsRead = (activityId: string) => {
+    markAsRead(activityId);
   };
 
-  const markAllAsRead = () => {
-    queryClient.setQueryData(["dashboard"], (old: unknown) => {
-      if (!old || typeof old !== "object") return old;
-      const data = old as { recentActivity: DashboardRecentActivity[] };
-      return {
-        ...data,
-        recentActivity: data.recentActivity.map((a) => ({ ...a, read: true })),
-      };
-    });
+  const handleMarkAllAsRead = () => {
+    if (unreadCount > 0 && !isMarkingAll) {
+      markAllAsRead();
+    }
   };
 
   return (
@@ -82,10 +78,11 @@ export function NotificationsDropdown() {
           {unreadCount > 0 && (
             <button
               type="button"
-              onClick={markAllAsRead}
-              className="text-xs text-accent hover:underline"
+              onClick={handleMarkAllAsRead}
+              disabled={isMarkingAll}
+              className="text-xs text-accent hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Marcar todas como lidas
+              {isMarkingAll ? "Marcando..." : "Marcar todas como lidas"}
             </button>
           )}
         </DropdownMenuLabel>
@@ -107,7 +104,8 @@ export function NotificationsDropdown() {
                     "flex gap-3 p-3 cursor-pointer",
                     !activity.read && "bg-surface-800/50"
                   )}
-                  onClick={() => markAsRead(activity.id)}
+                  onClick={() => handleMarkAsRead(activity.id)}
+                  disabled={activity.read}
                 >
                   <div
                     className={cn(
@@ -138,7 +136,10 @@ export function NotificationsDropdown() {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard/notifications" className="justify-center gap-2">
+          <Link
+            href="/dashboard/notifications"
+            className="justify-center gap-2"
+          >
             <History className="size-4" />
             Ver histórico completo
           </Link>

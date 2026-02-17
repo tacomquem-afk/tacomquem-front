@@ -6,9 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { LoanCardGrid } from "@/components/dashboard/loan-card-grid";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-function getInitialView(
-  view: string | null
-): "lent" | "borrowed" | "all" {
+function getInitialView(view: string | null): "lent" | "borrowed" | "all" {
   if (view === "lent" || view === "borrowed" || view === "all") {
     return view;
   }

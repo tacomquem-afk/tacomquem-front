@@ -144,6 +144,16 @@ export type NotificationsResponse = {
   unreadCount: number;
 };
 
+export type NotificationMarkAsReadResponse = {
+  id: string;
+  read: boolean;
+  updatedAt: string;
+};
+
+export type NotificationsMarkAllAsReadResponse = {
+  markedCount: number;
+};
+
 export type DashboardPendingLoan = {
   id: string;
   itemName: string;

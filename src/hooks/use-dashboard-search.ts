@@ -13,7 +13,9 @@ export function useDashboardSearch(query: string, limit = 10) {
         limit: String(limit),
       });
 
-      return api.get<DashboardSearchResponse>(`/api/dashboard/search?${params}`);
+      return api.get<DashboardSearchResponse>(
+        `/api/dashboard/search?${params}`
+      );
     },
     enabled: normalizedQuery.length > 0,
     staleTime: 30 * 1000,

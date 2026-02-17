@@ -78,7 +78,12 @@ export function ActivityTimeline() {
           </div>
         )}
 
-        <Button variant="ghost" size="sm" className="w-full mt-6 text-xs" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full mt-6 text-xs"
+          asChild
+        >
           <Link href="/dashboard/notifications">Ver histórico completo</Link>
         </Button>
       </CardContent>

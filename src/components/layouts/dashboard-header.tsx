@@ -20,7 +20,8 @@ export function DashboardHeader() {
   const normalizedQuery = debouncedQuery.trim();
   const hasSearchText = searchQuery.trim().length > 0;
   const { data, isFetching, isError } = useDashboardSearch(normalizedQuery);
-  const hasResults = !!data && (data.items.length > 0 || data.friends.length > 0);
+  const hasResults =
+    !!data && (data.items.length > 0 || data.friends.length > 0);
 
   return (
     <>
@@ -68,80 +69,80 @@ export function DashboardHeader() {
                   aria-hidden
                 />
                 <div className="relative z-10">
-                {isFetching ? (
-                  <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
-                    <Loader2 className="size-4 animate-spin" />
-                    Buscando...
-                  </div>
-                ) : isError ? (
-                  <div className="px-4 py-3 text-sm text-destructive">
-                    Não foi possível carregar a busca agora.
-                  </div>
-                ) : !hasResults ? (
-                  <div className="px-4 py-3 text-sm text-muted-foreground">
-                    Nenhum resultado encontrado.
-                  </div>
-                ) : (
-                  <div className="max-h-[28rem] overflow-y-auto p-2">
-                    {data.items.length > 0 && (
-                      <div className="mb-2">
-                        <p className="px-2 py-1 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                          Itens
-                        </p>
-                        <div className="space-y-1">
-                          {data.items.map((item) => (
-                            <Link
-                              key={item.id}
-                              href={`/dashboard/items?q=${encodeURIComponent(searchQuery.trim())}`}
-                              className="flex items-start gap-2 rounded-lg px-2 py-2 hover:bg-surface-800 transition-colors"
-                              onClick={() => setSearchQuery("")}
-                            >
-                              <Package className="size-4 mt-0.5 text-primary shrink-0" />
-                              <div className="min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">
-                                  {item.name}
-                                </p>
-                                {item.description && (
-                                  <p className="text-xs text-slate-300 truncate">
-                                    {item.description}
+                  {isFetching ? (
+                    <div className="flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
+                      <Loader2 className="size-4 animate-spin" />
+                      Buscando...
+                    </div>
+                  ) : isError ? (
+                    <div className="px-4 py-3 text-sm text-destructive">
+                      Não foi possível carregar a busca agora.
+                    </div>
+                  ) : !hasResults ? (
+                    <div className="px-4 py-3 text-sm text-muted-foreground">
+                      Nenhum resultado encontrado.
+                    </div>
+                  ) : (
+                    <div className="max-h-[28rem] overflow-y-auto p-2">
+                      {data.items.length > 0 && (
+                        <div className="mb-2">
+                          <p className="px-2 py-1 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                            Itens
+                          </p>
+                          <div className="space-y-1">
+                            {data.items.map((item) => (
+                              <Link
+                                key={item.id}
+                                href={`/dashboard/items?q=${encodeURIComponent(searchQuery.trim())}`}
+                                className="flex items-start gap-2 rounded-lg px-2 py-2 hover:bg-surface-800 transition-colors"
+                                onClick={() => setSearchQuery("")}
+                              >
+                                <Package className="size-4 mt-0.5 text-primary shrink-0" />
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-white truncate">
+                                    {item.name}
                                   </p>
-                                )}
-                              </div>
-                            </Link>
-                          ))}
+                                  {item.description && (
+                                    <p className="text-xs text-slate-300 truncate">
+                                      {item.description}
+                                    </p>
+                                  )}
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {data.friends.length > 0 && (
-                      <div>
-                        <p className="px-2 py-1 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                          Amigos
-                        </p>
-                        <div className="space-y-1">
-                          {data.friends.map((friend) => (
-                            <Link
-                              key={friend.id}
-                              href={`/dashboard/friends?q=${encodeURIComponent(searchQuery.trim())}`}
-                              className="flex items-start gap-2 rounded-lg px-2 py-2 hover:bg-surface-800 transition-colors"
-                              onClick={() => setSearchQuery("")}
-                            >
-                              <Users className="size-4 mt-0.5 text-primary shrink-0" />
-                              <div className="min-w-0">
-                                <p className="text-sm font-semibold text-white truncate">
-                                  {friend.name}
-                                </p>
-                                <p className="text-xs text-slate-300 truncate">
-                                  {friend.email}
-                                </p>
-                              </div>
-                            </Link>
-                          ))}
+                      {data.friends.length > 0 && (
+                        <div>
+                          <p className="px-2 py-1 text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                            Amigos
+                          </p>
+                          <div className="space-y-1">
+                            {data.friends.map((friend) => (
+                              <Link
+                                key={friend.id}
+                                href={`/dashboard/friends?q=${encodeURIComponent(searchQuery.trim())}`}
+                                className="flex items-start gap-2 rounded-lg px-2 py-2 hover:bg-surface-800 transition-colors"
+                                onClick={() => setSearchQuery("")}
+                              >
+                                <Users className="size-4 mt-0.5 text-primary shrink-0" />
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-white truncate">
+                                    {friend.name}
+                                  </p>
+                                  <p className="text-xs text-slate-300 truncate">
+                                    {friend.email}
+                                  </p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

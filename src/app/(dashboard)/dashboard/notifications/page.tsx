@@ -18,7 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNotifications } from "@/hooks/use-notifications";
+import {
+  useMarkNotificationAsRead,
+  useNotifications,
+} from "@/hooks/use-notifications";
 import { cn } from "@/lib/utils";
 import type { Notification, NotificationsReadFilter } from "@/types";
 
@@ -52,16 +55,25 @@ function parseLimit(raw: string | null): number {
   return Math.min(parsed, 50);
 }
 
-function NotificationCard({ notification }: { notification: Notification }) {
+function NotificationCard({
+  notification,
+  onClick,
+}: {
+  notification: Notification;
+  onClick: () => void;
+}) {
   const Icon = iconMap[notification.type];
   const colorClass = colorMap[notification.type];
 
   return (
     <Card
       className={cn(
-        "border-border-700 bg-surface-900/70",
-        !notification.read && "ring-1 ring-primary/40"
+        "border-border-700 bg-surface-900/70 transition-colors",
+        !notification.read && "ring-1 ring-primary/40 hover:bg-surface-800/50",
+        notification.read && "cursor-default",
+        !notification.read && "cursor-pointer"
       )}
+      onClick={!notification.read ? onClick : undefined}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
@@ -123,6 +135,9 @@ export default function NotificationsPage() {
     limit,
   });
 
+  const { mutate: markAsRead, isPending: isMarkingAsRead } =
+    useMarkNotificationAsRead();
+
   const notifications = data?.notifications ?? [];
   const unreadCount = data?.unreadCount ?? 0;
   const pagination = data?.pagination;
@@ -150,6 +165,13 @@ export default function NotificationsPage() {
       router.push(`${pathname}?${params.toString()}`);
     },
     [limit, pathname, router, searchParams]
+  );
+
+  const handleMarkAsRead = useCallback(
+    (notificationId: string) => {
+      markAsRead(notificationId);
+    },
+    [markAsRead]
   );
 
   const subtitle = useMemo(() => {
@@ -211,7 +233,11 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-3">
           {notifications.map((notification) => (
-            <NotificationCard key={notification.id} notification={notification} />
+            <NotificationCard
+              key={notification.id}
+              notification={notification}
+              onClick={() => handleMarkAsRead(notification.id)}
+            />
           ))}
         </div>
       )}
@@ -227,7 +253,7 @@ export default function NotificationsPage() {
               variant="outline"
               size="sm"
               onClick={() => updateSearch({ page: currentPage - 1 })}
-              disabled={currentPage <= 1 || isFetching}
+              disabled={currentPage <= 1 || isFetching || isMarkingAsRead}
             >
               <ChevronLeft className="size-4 mr-1" />
               Anterior
@@ -236,7 +262,9 @@ export default function NotificationsPage() {
               variant="outline"
               size="sm"
               onClick={() => updateSearch({ page: currentPage + 1 })}
-              disabled={currentPage >= totalPages || isFetching}
+              disabled={
+                currentPage >= totalPages || isFetching || isMarkingAsRead
+              }
             >
               Próxima
               <ChevronRight className="size-4 ml-1" />
