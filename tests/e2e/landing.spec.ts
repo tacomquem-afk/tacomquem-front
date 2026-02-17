@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Landing Page", () => {
   test.beforeEach(async ({ page }) => {
@@ -21,7 +21,9 @@ test.describe("Landing Page", () => {
   test("should have how it works section", async ({ page }) => {
     await expect(page.locator("text=Como funciona").first()).toBeVisible();
     // Check for at least some step content exists
-    const stepTexts = await page.locator("text=/Registre|Compartilhe|Confirme/i").count();
+    const stepTexts = await page
+      .locator("text=/Registre|Compartilhe|Confirme/i")
+      .count();
     expect(stepTexts).toBeGreaterThanOrEqual(1);
   });
 
@@ -31,19 +33,25 @@ test.describe("Landing Page", () => {
   });
 
   test("should have skip link for accessibility", async ({ page }) => {
-    const skipLink = page.locator("a:has-text('Pular para o conteúdo')").first();
-    if (await skipLink.count() > 0) {
+    const skipLink = page
+      .locator("a:has-text('Pular para o conteúdo')")
+      .first();
+    if ((await skipLink.count()) > 0) {
       await skipLink.focus();
       await expect(skipLink).toBeVisible();
     }
   });
 
   test("should have footer with copyright", async ({ page }) => {
-    await expect(page.locator("text=TáComQuem. Todos os direitos")).toBeVisible();
+    await expect(
+      page.locator("text=TáComQuem. Todos os direitos")
+    ).toBeVisible();
   });
 
   test("should have header with logo", async ({ page }) => {
-    await expect(page.locator("header").locator("text=TáComQuem").first()).toBeVisible();
+    await expect(
+      page.locator("header").locator("text=TáComQuem").first()
+    ).toBeVisible();
   });
 
   test("should have navigation buttons in header", async ({ page }) => {

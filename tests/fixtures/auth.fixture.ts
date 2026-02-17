@@ -1,5 +1,5 @@
-import { test as base, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
+import { test as base, expect } from "@playwright/test";
 import testUsers from "./test-users.json";
 
 type AuthFixtures = {
@@ -25,7 +25,9 @@ export const test = base.extend<AuthFixtures>({
   authenticatedPage: async ({ page, request, baseURL }, use) => {
     const [firstUser] = testUsers.users;
     if (!firstUser) {
-      throw new Error("No test user available in tests/fixtures/test-users.json");
+      throw new Error(
+        "No test user available in tests/fixtures/test-users.json"
+      );
     }
 
     const apiBaseUrl = getApiBaseUrl();

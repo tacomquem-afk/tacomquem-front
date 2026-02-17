@@ -1,10 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import testUsers from "../fixtures/test-users.json";
 import {
   loginAsUser,
-  registerNewUser,
   logoutUser,
+  registerNewUser,
 } from "../helpers/auth.helper";
-import testUsers from "../fixtures/test-users.json";
 
 test.describe("Authentication Flow", () => {
   test("should display login page", async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe("Authentication Flow", () => {
     await page.click('button[type="submit"]');
 
     // Aguardar mensagem de erro ou verificar que continua na página de login
-    const alertElement = page.locator("[role=\"alert\"]").first();
-    if (await alertElement.count() > 0) {
+    const alertElement = page.locator('[role="alert"]').first();
+    if ((await alertElement.count()) > 0) {
       await expect(alertElement).toBeVisible();
     } else {
       // Se não há alerta, deve continuar na página de login (não redirecionou)

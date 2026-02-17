@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Register Page", () => {
   test.beforeEach(async ({ page }) => {
@@ -32,13 +32,13 @@ test.describe("Register Page", () => {
     await passwordInput.fill("weak");
     // Skip if strength indicator is not implemented
     const weakIndicator = page.locator("text=/Fraca|Weak/i").first();
-    if (await weakIndicator.count() > 0) {
+    if ((await weakIndicator.count()) > 0) {
       await expect(weakIndicator).toBeVisible();
     }
 
     await passwordInput.fill("StrongPass123!");
     const strongIndicator = page.locator("text=/Forte|Strong/i").first();
-    if (await strongIndicator.count() > 0) {
+    if ((await strongIndicator.count()) > 0) {
       await expect(strongIndicator).toBeVisible();
     }
   });
@@ -65,7 +65,9 @@ test.describe("Register Page", () => {
   });
 
   test("should have description text", async ({ page }) => {
-    await expect(page.locator("text=Comece a gerenciar seus empréstimos")).toBeVisible();
+    await expect(
+      page.locator("text=Comece a gerenciar seus empréstimos")
+    ).toBeVisible();
   });
 
   test("should show email validation error", async ({ page }) => {
@@ -73,7 +75,7 @@ test.describe("Register Page", () => {
     await emailInput.fill("invalid-email");
     await page.click('button[type="submit"]');
     const errorMsg = page.locator("text=Email inválido");
-    if (await errorMsg.count() > 0) {
+    if ((await errorMsg.count()) > 0) {
       await expect(errorMsg).toBeVisible();
     }
   });
@@ -82,6 +84,8 @@ test.describe("Register Page", () => {
     const passwordInput = page.locator('input[type="password"]');
     await passwordInput.fill("weak");
     await page.click('button[type="submit"]');
-    await expect(page.locator("text=Senha deve ter no mínimo 8 caracteres")).toBeVisible();
+    await expect(
+      page.locator("text=Senha deve ter no mínimo 8 caracteres")
+    ).toBeVisible();
   });
 });

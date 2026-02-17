@@ -1,12 +1,10 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePlus, Loader2, Package, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { FormError } from "@/components/forms/form-error";
 import { Button } from "@/components/ui/button";
 import {
@@ -319,7 +317,6 @@ export function EditItemDialog({
                         className="object-cover"
                       />
                     ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={img.previewUrl}
                         alt={`Preview ${index + 1}`}

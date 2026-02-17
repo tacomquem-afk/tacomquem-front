@@ -44,9 +44,7 @@ export function setTokens(accessToken: string, refreshToken: string): void {
   if (typeof window === "undefined") return;
   localStorage.setItem("tcq_access_token", accessToken);
   localStorage.setItem("tcq_refresh_token", refreshToken);
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
   document.cookie = `tcq_access_token=${accessToken}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie sync for SSR auth
   document.cookie = `tcq_refresh_token=${refreshToken}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
 }
 
@@ -54,9 +52,7 @@ export function clearTokens(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem("tcq_access_token");
   localStorage.removeItem("tcq_refresh_token");
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
   document.cookie = "tcq_access_token=; path=/; max-age=0";
-  // biome-ignore lint/suspicious/noDocumentCookie: intentional cookie clear for SSR auth
   document.cookie = "tcq_refresh_token=; path=/; max-age=0";
 }
 

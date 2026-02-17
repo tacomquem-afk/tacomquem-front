@@ -4,7 +4,7 @@ import testUsers from "../fixtures/test-users.json";
 export async function loginAsUser(
   page: Page,
   email: string = testUsers.users[0]?.email ?? "test1@example.com",
-  password: string = testUsers.users[0]?.password ?? "Test@123456",
+  password: string = testUsers.users[0]?.password ?? "Test@123456"
 ) {
   await page.goto("/login");
   await page.fill('input[type="email"]', email);
@@ -28,7 +28,7 @@ export async function registerNewUser(
   page: Page,
   name: string = "Test User",
   email: string = "newuser@example.com",
-  password: string = "SecurePassword123",
+  password: string = "SecurePassword123"
 ) {
   await page.goto("/register");
   await page.fill('input[id="name"]', name);

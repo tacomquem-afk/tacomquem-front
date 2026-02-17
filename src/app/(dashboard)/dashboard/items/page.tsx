@@ -1,16 +1,16 @@
 "use client";
 
 import { Package, Plus, Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 import { CreateItemDialog } from "@/components/dashboard/create-item-dialog";
 import { ItemCardGrid } from "@/components/dashboard/item-card-grid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useItems } from "@/hooks/use-items";
 import { useDashboardSearch } from "@/hooks/use-dashboard-search";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useItems } from "@/hooks/use-items";
 
 export default function ItemsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

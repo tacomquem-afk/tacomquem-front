@@ -238,7 +238,6 @@ export default function ConfirmLoanPage() {
             <div className="space-y-3">
               <div className="aspect-[4/3] w-full overflow-hidden rounded-md border bg-muted">
                 {itemImage ? (
-                  // biome-ignore lint/performance/noImgElement: dynamic external images and graceful fallback
                   <img
                     src={itemImage}
                     alt={itemName}
@@ -266,7 +265,6 @@ export default function ConfirmLoanPage() {
                       onClick={() => setSelectedImageIndex(index)}
                       aria-label={`Visualizar imagem ${index + 1} de ${itemImages.length}`}
                     >
-                      {/* biome-ignore lint/performance/noImgElement: dynamic external images and graceful fallback */}
                       <img
                         src={image}
                         alt={`${itemName} - imagem ${index + 1}`}
