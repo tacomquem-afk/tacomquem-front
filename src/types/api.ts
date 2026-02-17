@@ -135,6 +135,33 @@ export type DashboardActiveLoan = {
   confirmedAt: string;
 };
 
+export type DashboardSearchItem = {
+  id: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+};
+
+export type DashboardSearchFriend = {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  lentCount: number;
+  borrowedCount: number;
+};
+
+export type DashboardSearchResponse = {
+  query: string;
+  items: DashboardSearchItem[];
+  friends: DashboardSearchFriend[];
+  meta: {
+    itemCount: number;
+    friendCount: number;
+    limit: number;
+  };
+};
+
 export type Friend = {
   id: string;
   name: string;

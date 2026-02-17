@@ -1,25 +1,38 @@
 "use client";
 
 import { Search, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { FriendCard } from "@/components/dashboard/friend-card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardSearch } from "@/hooks/use-dashboard-search";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useFriends } from "@/hooks/use-friends";
 
 export default function FriendsPage() {
+  const searchParams = useSearchParams();
   const { data: friends, isLoading } = useFriends();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  const debouncedSearch = useDebouncedValue(search, 300);
+  const normalizedSearch = debouncedSearch.trim();
+  const isSearching = normalizedSearch.length > 0;
+  const {
+    data: searchData,
+    isFetching: isSearchLoading,
+    isError: isSearchError,
+  } = useDashboardSearch(normalizedSearch, 20);
+
+  useEffect(() => {
+    setSearch(searchParams.get("q") ?? "");
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
-    if (!friends) return [];
-    const q = search.trim().toLowerCase();
-    if (!q) return friends;
-    return friends.filter(
-      (f) =>
-        f.name.toLowerCase().includes(q) || f.email.toLowerCase().includes(q)
-    );
-  }, [friends, search]);
+    if (!isSearching) return friends ?? [];
+    return searchData?.friends ?? [];
+  }, [friends, isSearching, searchData]);
+
+  const showLoading = isLoading || (isSearching && isSearchLoading);
 
   return (
     <div className="space-y-10">
@@ -32,7 +45,7 @@ export default function FriendsPage() {
           </p>
         </div>
 
-        {!isLoading && friends && friends.length > 0 && (
+        {!showLoading && friends && friends.length > 0 && (
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
@@ -61,11 +74,21 @@ export default function FriendsPage() {
           )}
         </div>
 
-        {isLoading ? (
+        {showLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-44 w-full" />
             ))}
+          </div>
+        ) : isSearchError ? (
+          <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-700 rounded-2xl">
+            <Search className="size-12 text-muted-foreground mb-4" />
+            <h3 className="font-semibold text-lg mb-2">
+              Erro ao buscar amigos
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              Não foi possível carregar a busca agora. Tente novamente.
+            </p>
           </div>
         ) : !friends || friends.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-700 rounded-2xl">
@@ -80,7 +103,7 @@ export default function FriendsPage() {
           <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border-700 rounded-2xl">
             <Search className="size-12 text-muted-foreground mb-4" />
             <h3 className="font-semibold text-lg mb-2">
-              Nenhum resultado para &quot;{search}&quot;
+              Nenhum resultado para &quot;{normalizedSearch}&quot;
             </h3>
             <p className="text-sm text-muted-foreground max-w-sm">
               Tente buscar por outro nome ou e-mail.

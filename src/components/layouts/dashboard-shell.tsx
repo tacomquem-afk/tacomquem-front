@@ -15,7 +15,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       {/* Main content */}
       <main className="flex-1 flex flex-col lg:ml-64 bg-background-950">
         <DashboardHeader />
-        <div className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full">
+        <div className="flex-1 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full">
           {children}
         </div>
       </main>

@@ -1,12 +1,5 @@
 "use client";
 
-import {
-  History,
-  LayoutDashboard,
-  Package,
-  Settings,
-  Users,
-} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
@@ -15,13 +8,10 @@ import { Button } from "@/components/ui/button";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-
-const navigation = [
-  { name: "Visão Geral", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Meus Itens", href: "/dashboard/items", icon: Package },
-  { name: "Histórico", href: "/dashboard/history", icon: History },
-  { name: "Amigos", href: "/dashboard/friends", icon: Users },
-];
+import {
+  dashboardNavigation,
+  dashboardSettingsItem,
+} from "./dashboard-navigation";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -59,7 +49,7 @@ export function DashboardSidebar() {
 
         {/* Navigation */}
         <nav className="mt-6 flex flex-col gap-1">
-          {navigation.map((item) => {
+          {dashboardNavigation.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -98,9 +88,9 @@ export function DashboardSidebar() {
         </div>
 
         <Button variant="ghost" className="w-full justify-start mt-2" asChild>
-          <Link href="/dashboard/settings">
-            <Settings className="size-4 mr-2" />
-            Configurações
+          <Link href={dashboardSettingsItem.href}>
+            <dashboardSettingsItem.icon className="size-4 mr-2" />
+            {dashboardSettingsItem.name}
           </Link>
         </Button>
       </div>

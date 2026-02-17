@@ -3509,9 +3509,38 @@
                       "type": "array",
                       "items": { "type": "string" }
                     },
-                    "lenderName": { "type": "string" }
+                    "lenderName": { "type": "string" },
+                    "itemDescription": {
+                      "anyOf": [
+                        { "type": "string" },
+                        { "nullable": true, "enum": [null] }
+                      ]
+                    },
+                    "expectedReturnDate": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        },
+                        { "nullable": true, "enum": [null] }
+                      ]
+                    },
+                    "lenderNotes": {
+                      "anyOf": [
+                        { "type": "string" },
+                        { "nullable": true, "enum": [null] }
+                      ]
+                    }
                   },
-                  "required": ["itemName", "itemImages", "lenderName"],
+                  "required": [
+                    "itemName",
+                    "itemImages",
+                    "lenderName",
+                    "itemDescription",
+                    "expectedReturnDate",
+                    "lenderNotes"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -4127,6 +4156,432 @@
             }
           },
           "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/search": {
+      "get": {
+        "summary": "Search items and friends",
+        "tags": ["Dashboard"],
+        "description": "Performs a scoped search for the authenticated user across active owned items and known friends.",
+        "parameters": [
+          {
+            "schema": { "type": "string", "minLength": 1, "maxLength": 100 },
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "description": "Search term for items and friends"
+          },
+          {
+            "schema": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Maximum number of results per group (items and friends), between 1 and 20"
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "query": { "type": "string" },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "name": { "type": "string" },
+                          "description": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "imageUrl": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          }
+                        },
+                        "required": ["id", "name", "description", "imageUrl"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "friends": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "name": { "type": "string" },
+                          "email": {
+                            "type": "string",
+                            "format": "email",
+                            "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                          },
+                          "avatarUrl": {
+                            "anyOf": [
+                              { "type": "string" },
+                              { "nullable": true, "enum": [null] }
+                            ]
+                          },
+                          "lentCount": { "type": "number" },
+                          "borrowedCount": { "type": "number" }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "email",
+                          "avatarUrl",
+                          "lentCount",
+                          "borrowedCount"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "itemCount": { "type": "number" },
+                        "friendCount": { "type": "number" },
+                        "limit": { "type": "number" }
+                      },
+                      "required": ["itemCount", "friendCount", "limit"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["query", "items", "friends", "meta"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/": {
+      "get": {
+        "summary": "List user notifications",
+        "tags": ["Notifications"],
+        "description": "Returns a paginated list of notifications for the authenticated user.\nUse the `read` filter to show only unread (`false`) or already-read (`true`) notifications.\nThe `unreadCount` field always reflects the total number of unread notifications regardless\nof the current filter — use it to display the notification badge count in the UI.",
+        "parameters": [
+          {
+            "schema": { "type": "string", "enum": ["true", "false"] },
+            "in": "query",
+            "name": "read",
+            "required": false,
+            "description": "Filter by read status. Omit to return all notifications"
+          },
+          {
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "description": "Page number (1-based)"
+          },
+          {
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Items per page (1–50, default 20)"
+          }
+        ],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Paginated list of notifications with unread count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notifications": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "description": "Unique notification ID"
+                          },
+                          "loanId": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ],
+                            "description": "Associated loan ID, null if not linked to a loan"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "loan_created",
+                              "loan_confirmed",
+                              "loan_returned",
+                              "loan_reminder"
+                            ],
+                            "description": "Notification event type"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Short heading displayed in the notification card"
+                          },
+                          "message": {
+                            "type": "string",
+                            "description": "Full notification body text"
+                          },
+                          "read": {
+                            "type": "boolean",
+                            "description": "Whether the user has read this notification"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
+                            "description": "ISO 8601 timestamp when the notification was created"
+                          },
+                          "sentAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              },
+                              { "nullable": true, "enum": [null] }
+                            ],
+                            "description": "ISO 8601 timestamp when the push/email was dispatched, null if not yet sent"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "loanId",
+                          "type",
+                          "title",
+                          "message",
+                          "read",
+                          "createdAt",
+                          "sentAt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Ordered list of notifications, newest first"
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": { "type": "number" },
+                        "limit": { "type": "number" },
+                        "total": { "type": "number" },
+                        "totalPages": { "type": "number" }
+                      },
+                      "required": ["page", "limit", "total", "totalPages"],
+                      "additionalProperties": false,
+                      "description": "Pagination metadata"
+                    },
+                    "unreadCount": {
+                      "type": "number",
+                      "description": "Total unread notifications for this user (ignores active read filter)"
+                    }
+                  },
+                  "required": ["notifications", "pagination", "unreadCount"],
+                  "additionalProperties": false,
+                  "description": "Paginated list of notifications with unread count"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "status": { "type": "number" },
+                    "detail": { "type": "string" },
+                    "errorCode": { "type": "string" },
+                    "instance": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        },
+                        "required": ["field", "message"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "errorCode",
+                    "instance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "422": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -7303,6 +7758,7 @@
     { "name": "Loans", "description": "Loan management endpoints" },
     { "name": "Links", "description": "Public loan link endpoints" },
     { "name": "Dashboard", "description": "User dashboard endpoints" },
+    { "name": "Notifications", "description": "User notification endpoints" },
     { "name": "Admin - Analytics", "description": "Admin analytics endpoints" },
     {
       "name": "Admin - Users",
