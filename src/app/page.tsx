@@ -559,17 +559,19 @@ export default function HomePage() {
           <p className="text-slate-500 text-sm">
             © 2026 TáComQuem. Todos os direitos reservados.
           </p>
-          <div className="flex gap-6 text-sm text-slate-400">
-            <Link href="#" className="hover:text-white transition-colors">
-              Privacidade
-            </Link>
-            <Link href="#" className="hover:text-white transition-colors">
-              Termos
-            </Link>
-            <Link href="#" className="hover:text-white transition-colors">
-              Contato
-            </Link>
-          </div>
+          {config.authEnabled ? (
+            <div className="flex gap-6 text-sm text-slate-400">
+              <Link href="#" className="hover:text-white transition-colors">
+                Privacidade
+              </Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                Termos
+              </Link>
+              <Link href="#" className="hover:text-white transition-colors">
+                Contato
+              </Link>
+            </div>
+          ) : null}
         </div>
       </footer>
     </main>
