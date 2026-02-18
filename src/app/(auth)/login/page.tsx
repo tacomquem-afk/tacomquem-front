@@ -1,5 +1,5 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { config } from "@/lib/config";
 import { LoginForm } from "./login-form";

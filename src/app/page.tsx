@@ -7,6 +7,7 @@ import {
   Link as LinkIcon,
   Lock,
   Shield,
+  Sparkles,
   Zap,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -62,12 +63,21 @@ export default function HomePage() {
               Benefícios
             </Link>
             {config.authEnabled && (
-              <Link href="/login" className="hover:text-white transition-colors">
+              <Link
+                href="/login"
+                className="hover:text-white transition-colors"
+              >
                 Entrar
               </Link>
             )}
           </nav>
           <div className="flex items-center gap-3 md:gap-4">
+            {config.authEnabled && config.betaModeEnabled && (
+              <span className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold text-amber-400 uppercase tracking-wide">
+                <Sparkles className="h-3 w-3" />
+                Beta Privado
+              </span>
+            )}
             {config.authEnabled && (
               <Link
                 href="/login"
@@ -81,7 +91,9 @@ export default function HomePage() {
                 asChild
                 className="rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold px-4 md:px-6 py-1 md:py-2 text-[10px] sm:text-xs md:text-base shadow-lg shadow-blue-500/20 transition-all hover:scale-105 h-9 md:h-10"
               >
-                <Link href="/register">Começar Grátis</Link>
+                <Link href={config.betaModeEnabled ? "/login" : "/register"}>
+                  {config.betaModeEnabled ? "Acessar Beta" : "Começar Grátis"}
+                </Link>
               </Button>
             ) : (
               <span className="rounded-full border border-[#2b8cee]/40 bg-[#2b8cee]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#8bc4ff] md:px-4 md:text-xs">
@@ -103,7 +115,9 @@ export default function HomePage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2b8cee] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2b8cee]"></span>
             </span>
-            Novo Jeito de Emprestar
+            {config.betaModeEnabled
+              ? "Acesso Antecipado"
+              : "Novo Jeito de Emprestar"}
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 max-w-5xl mx-auto leading-[1.2] md:leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
             TáComQuem: Nunca mais perca o controle dos seus{" "}
@@ -113,15 +127,29 @@ export default function HomePage() {
             Saiba exatamente quem está com seus itens — e quando eles voltam.
             Simples, rápido e sem constrangimentos.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 md:mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 mb-16 md:mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             {config.authEnabled ? (
-              <Button
-                asChild
-                size="lg"
-                className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-12 md:h-14 px-8 text-base md:text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
-              >
-                <Link href="/register">👉 Começar agora</Link>
-              </Button>
+              config.betaModeEnabled ? (
+                <div className="flex flex-col items-center gap-3 w-full sm:w-auto">
+                  <div className="w-full sm:w-auto rounded-full border border-amber-500/30 bg-amber-500/10 px-8 py-3 text-center text-sm font-semibold text-amber-400 md:h-14 md:px-10 md:py-4 md:text-base">
+                    Em acesso por convite
+                  </div>
+                  <Link
+                    href="/login"
+                    className="text-sm text-[#2b8cee] hover:underline"
+                  >
+                    Já tenho um convite — Entrar
+                  </Link>
+                </div>
+              ) : (
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full sm:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-12 md:h-14 px-8 text-base md:text-lg shadow-xl shadow-blue-500/25 transition-all hover:-translate-y-1"
+                >
+                  <Link href="/register">Começar agora</Link>
+                </Button>
+              )
             ) : (
               <div className="w-full sm:w-auto rounded-full border border-[#2b8cee]/40 bg-[#2b8cee]/10 px-8 py-3 text-center text-sm font-semibold text-[#8bc4ff] md:h-14 md:px-10 md:py-4 md:text-base">
                 Cadastro em breve
@@ -513,18 +541,34 @@ export default function HomePage() {
             seguras.
           </p>
           {config.authEnabled ? (
-            <div className="flex flex-col items-center gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="w-full md:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-16 px-10 text-xl shadow-2xl shadow-blue-500/40 transition-all hover:scale-105"
-              >
-                <Link href="/register">Começar Agora Gratuitamente</Link>
-              </Button>
-              <p className="text-sm text-slate-500">
-                Sem cartão de crédito necessário
-              </p>
-            </div>
+            config.betaModeEnabled ? (
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-lg text-slate-400 max-w-md">
+                  O TáComQuem está crescendo devagar e com qualidade. Em breve
+                  para todos.
+                </p>
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full md:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-16 px-10 text-xl shadow-2xl shadow-blue-500/40 transition-all hover:scale-105"
+                >
+                  <Link href="/login">Tenho um convite — Acessar</Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full md:w-auto rounded-full bg-[#2b8cee] hover:bg-[#2b8cee]/90 text-white font-bold h-16 px-10 text-xl shadow-2xl shadow-blue-500/40 transition-all hover:scale-105"
+                >
+                  <Link href="/register">Começar Agora Gratuitamente</Link>
+                </Button>
+                <p className="text-sm text-slate-500">
+                  Sem cartão de crédito necessário
+                </p>
+              </div>
+            )
           ) : (
             <div className="mx-auto max-w-xl rounded-2xl border border-[#2b8cee]/30 bg-[#2b8cee]/10 px-6 py-5">
               <p className="text-base font-semibold text-[#8bc4ff]">

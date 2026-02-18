@@ -36,11 +36,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useItems } from "@/hooks/use-items";
 import { useCreateLoan, useLoans } from "@/hooks/use-loans";
 import type { ApiError } from "@/lib/api/client";
-import type { Item } from "@/types";
 import {
   type CreateLoanFormData,
   createLoanSchema,
 } from "@/lib/validations/loan";
+import type { Item } from "@/types";
 
 type RegisterLoanDialogProps = {
   open: boolean;
