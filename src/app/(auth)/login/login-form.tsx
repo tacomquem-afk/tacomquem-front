@@ -30,6 +30,7 @@ export function LoginForm() {
   const [isBetaRejected, setIsBetaRejected] = useState(false);
 
   const registered = searchParams.get("registered") === "true";
+  const errorParam = searchParams.get("error");
   const nextParam = searchParams.get("next");
   const safeNextParam = nextParam?.startsWith("/") ? nextParam : null;
   const redirectTo = safeNextParam ?? "/dashboard";
@@ -65,6 +66,12 @@ export function LoginForm() {
       cancelled = true;
     };
   }, [confirmToken]);
+
+  useEffect(() => {
+    if (errorParam === "beta_not_available") {
+      setIsBetaRejected(true);
+    }
+  }, [errorParam]);
 
   const {
     register,

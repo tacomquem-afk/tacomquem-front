@@ -1,10 +1,12 @@
 "use client";
 
+import { Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/shared/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useDashboard } from "@/hooks/use-dashboard";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
@@ -13,10 +15,13 @@ import {
   dashboardSettingsItem,
 } from "./dashboard-navigation";
 
+const ADMIN_ROLES = ["MODERATOR", "ANALYST", "SUPPORT", "SUPER_ADMIN"];
+
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { data: dashboard } = useDashboard();
+  const isAdmin = user?.role && ADMIN_ROLES.includes(user.role);
 
   return (
     <aside className="w-64 bg-surface-900 border-r border-border-700 flex flex-col fixed h-full z-20 hidden lg:flex">
@@ -86,6 +91,22 @@ export function DashboardSidebar() {
             atualmente emprestados
           </p>
         </div>
+
+        {isAdmin && (
+          <>
+            <Separator className="my-2 bg-border-700" />
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-2 text-primary hover:bg-primary/10"
+              asChild
+            >
+              <Link href="/admin">
+                <Shield className="size-4" />
+                Painel Admin
+              </Link>
+            </Button>
+          </>
+        )}
 
         <Button variant="ghost" className="w-full justify-start mt-2" asChild>
           <Link href={dashboardSettingsItem.href}>

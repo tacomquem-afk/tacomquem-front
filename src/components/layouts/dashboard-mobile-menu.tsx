@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Plus } from "lucide-react";
+import { LogOut, Plus, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +19,8 @@ import {
   dashboardSettingsItem,
 } from "./dashboard-navigation";
 
+const ADMIN_ROLES = ["MODERATOR", "ANALYST", "SUPPORT", "SUPER_ADMIN"];
+
 type DashboardMobileMenuProps = {
   onRegisterLoan: () => void;
 };
@@ -29,6 +31,7 @@ export function DashboardMobileMenu({
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { data: dashboard } = useDashboard();
+  const isAdmin = user?.role && ADMIN_ROLES.includes(user.role);
 
   const userName = user?.name ?? "Usuário";
   const userInitials =
@@ -113,6 +116,21 @@ export function DashboardMobileMenu({
             Registrar Empréstimo
           </Button>
         </SheetClose>
+
+        {isAdmin && (
+          <SheetClose asChild>
+            <Link
+              href="/admin"
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "w-full justify-start gap-2 text-primary"
+              )}
+            >
+              <Shield className="size-4" />
+              Painel Admin
+            </Link>
+          </SheetClose>
+        )}
 
         <div className="grid grid-cols-2 gap-2">
           <SheetClose asChild>
