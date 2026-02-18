@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthCard } from "@/components/auth/auth-card";
+import { BetaRejectionPanel } from "@/components/auth/beta-rejection-panel";
 import { SocialLoginButton } from "@/components/auth/social-login-button";
 import { FormError } from "@/components/forms/form-error";
 import { PasswordInput } from "@/components/forms/password-input";
@@ -26,6 +27,7 @@ export function LoginForm() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isBetaRejected, setIsBetaRejected] = useState(false);
 
   const registered = searchParams.get("registered") === "true";
   const nextParam = searchParams.get("next");
@@ -80,12 +82,17 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setError(null);
+    setIsBetaRejected(false);
 
     try {
       await login(data.email, data.password, redirectTo);
     } catch (err) {
       const apiError = err as ApiError;
-      setError(apiError.error ?? "Erro ao fazer login. Tente novamente.");
+      if (apiError.status === 403) {
+        setIsBetaRejected(true);
+      } else {
+        setError(apiError.error ?? "Erro ao fazer login. Tente novamente.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +181,11 @@ export function LoginForm() {
           </Label>
         </div>
 
-        {error && <FormError message={error} />}
+        {isBetaRejected ? (
+          <BetaRejectionPanel />
+        ) : (
+          error && <FormError message={error} />
+        )}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
