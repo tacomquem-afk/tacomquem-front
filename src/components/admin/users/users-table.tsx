@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -256,6 +256,9 @@ export function UsersTable() {
         onOpenChange={(open) => !open && setSelectedUserId(null)}
       >
         <SheetContent className="w-full sm:max-w-md border-border-700">
+          <SheetTitle className="sr-only" aria-hidden={!!selectedUserId}>
+            Detalhes do Usuário
+          </SheetTitle>
           {selectedUserId && (
             <UserDetailSheet
               userId={selectedUserId}
