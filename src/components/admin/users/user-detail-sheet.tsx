@@ -10,6 +10,16 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   useAdminUser,
   useBlockUser,
+  useDeleteUser,
   useUnblockUser,
 } from "@/hooks/use-admin-users";
 
@@ -54,7 +65,10 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
   const { data: user, isLoading } = useAdminUser(userId);
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
+  const deleteUser = useDeleteUser();
   const [blockReason, setBlockReason] = useState("");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
 
   useEffect(() => {
     if (blockUser.isSuccess) {
@@ -69,6 +83,24 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
       onClose();
     }
   }, [unblockUser.isSuccess, onClose]);
+
+  const handleDelete = async () => {
+    if (!user || deleteReason.trim().length < 10) return;
+
+    try {
+      await deleteUser.mutateAsync({
+        userId: user.id,
+        reason: deleteReason.trim(),
+      });
+      toast.success("Usuário excluído com sucesso");
+      onClose();
+    } catch {
+      toast.error("Erro ao excluir usuário");
+    } finally {
+      setDeleteOpen(false);
+      setDeleteReason("");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -201,7 +233,49 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
             </Button>
           </>
         )}
+        <Button
+          variant="destructive"
+          className="w-full"
+          onClick={() => setDeleteOpen(true)}
+          disabled={deleteUser.isPending}
+        >
+          Excluir Usuário
+        </Button>
       </div>
+
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          setDeleteOpen(open);
+          if (!open) {
+            setDeleteReason("");
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove o acesso do usuário de forma permanente e não
+              pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            placeholder="Motivo da exclusão (mínimo 10 caracteres)"
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteUser.isPending || deleteReason.trim().length < 10}
+            >
+              Excluir usuário
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

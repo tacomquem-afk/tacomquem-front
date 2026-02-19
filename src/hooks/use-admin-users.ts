@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type { AdminUserDetailResponse, AdminUsersResponse } from "@/types";
+import type {
+  AdminDeleteUserResponse,
+  AdminUserDetailResponse,
+  AdminUsersResponse,
+} from "@/types";
 
 export function useAdminUsers(page = 1) {
   return useQuery({
@@ -35,6 +39,20 @@ export function useUnblockUser() {
   return useMutation({
     mutationFn: (userId: string) =>
       api.post(`/api/admin/users/${userId}/unblock`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, reason }: { userId: string; reason: string }) =>
+      api.request<AdminDeleteUserResponse>(`/api/admin/users/${userId}`, {
+        method: "DELETE",
+        body: { reason },
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     },

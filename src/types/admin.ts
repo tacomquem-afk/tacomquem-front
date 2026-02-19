@@ -99,6 +99,11 @@ export type AdminBlockUserResponse = {
   message: string;
 };
 
+export type AdminDeleteUserResponse = {
+  success: boolean;
+  message: string;
+};
+
 // ── Moderation ────────────────────────────────────────────
 
 export type AdminModerationItem = {

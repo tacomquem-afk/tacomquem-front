@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, MoreHorizontal, ShieldBan } from "lucide-react";
+import { BadgeCheck, MoreHorizontal, ShieldBan, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -35,6 +35,7 @@ import {
 import {
   useAdminUsers,
   useBlockUser,
+  useDeleteUser,
   useUnblockUser,
 } from "@/hooks/use-admin-users";
 import { UserDetailSheet } from "./user-detail-sheet";
@@ -64,10 +65,13 @@ export function UsersTable() {
   const [userToBlock, setUserToBlock] = useState<string | null>(null);
   const [blockReason, setBlockReason] = useState("");
   const [userToUnblock, setUserToUnblock] = useState<string | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [deleteReason, setDeleteReason] = useState("");
 
   const { data, isLoading } = useAdminUsers(page);
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
+  const deleteUser = useDeleteUser();
 
   const users = data?.users ?? [];
   const pagination = data?.pagination;
@@ -96,6 +100,23 @@ export function UsersTable() {
       toast.error("Erro ao desbloquear usuário");
     } finally {
       setUserToUnblock(null);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!userToDelete || deleteReason.trim().length < 10) return;
+
+    try {
+      await deleteUser.mutateAsync({
+        userId: userToDelete,
+        reason: deleteReason.trim(),
+      });
+      toast.success("Usuário excluído com sucesso");
+    } catch {
+      toast.error("Erro ao excluir usuário");
+    } finally {
+      setUserToDelete(null);
+      setDeleteReason("");
     }
   };
 
@@ -211,6 +232,13 @@ export function UsersTable() {
                             Bloquear
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem
+                          onClick={() => setUserToDelete(user.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 size-4" />
+                          Excluir
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -319,6 +347,41 @@ export function UsersTable() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleUnblock}>
               Desbloquear
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog
+        open={userToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUserToDelete(null);
+            setDeleteReason("");
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove o acesso do usuário de forma permanente e não
+              pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            placeholder="Motivo da exclusão (mínimo 10 caracteres)"
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteReason.trim().length < 10}
+            >
+              Excluir usuário
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
