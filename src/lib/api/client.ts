@@ -146,14 +146,19 @@ class ApiClient {
       requestInit.body = JSON.stringify(body);
     }
 
-    let response = await fetch(`${this.baseUrl}${endpoint}`, requestInit);
+    // allow callers to pass an absolute URL (e.g. `https://api.example.com/...`) or a path
+    const url = String(endpoint).startsWith("http")
+      ? String(endpoint)
+      : `${this.baseUrl}${endpoint}`;
+
+    let response = await fetch(url, requestInit);
 
     if (response.status === 401 && !skipAuth) {
       const refreshed = await this.refreshAccessToken();
       if (refreshed) {
         const newToken = await getAccessToken();
         requestHeaders.Authorization = `Bearer ${newToken}`;
-        response = await fetch(`${this.baseUrl}${endpoint}`, {
+        response = await fetch(url, {
           ...requestInit,
           headers: requestHeaders,
         });
@@ -207,7 +212,11 @@ class ApiClient {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    let response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const uploadUrl = String(endpoint).startsWith("http")
+      ? String(endpoint)
+      : `${this.baseUrl}${endpoint}`;
+
+    let response = await fetch(uploadUrl, {
       method: "POST",
       headers,
       body: formData,
@@ -220,7 +229,7 @@ class ApiClient {
         if (newToken) {
           headers.Authorization = `Bearer ${newToken}`;
         }
-        response = await fetch(`${this.baseUrl}${endpoint}`, {
+        response = await fetch(uploadUrl, {
           method: "POST",
           headers,
           body: formData,

@@ -109,7 +109,10 @@ export function BetaUsersTable() {
     return (
       <div className="space-y-4">
         {["s1", "s2", "s3", "s4", "s5"].map((k) => (
-          <div key={k} className="h-16 bg-surface-800 rounded-lg animate-pulse" />
+          <div
+            key={k}
+            className="h-16 bg-surface-800 rounded-lg animate-pulse"
+          />
         ))}
       </div>
     );

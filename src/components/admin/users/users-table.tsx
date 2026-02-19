@@ -1,6 +1,14 @@
 "use client";
 
-import { BadgeCheck, MoreHorizontal, ShieldBan } from "lucide-react";
+import {
+  BadgeCheck,
+  MailCheck,
+  MailX,
+  MoreHorizontal,
+  Search,
+  ShieldBan,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -23,7 +31,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -35,8 +50,10 @@ import {
 import {
   useAdminUsers,
   useBlockUser,
+  useDeleteUser,
   useUnblockUser,
 } from "@/hooks/use-admin-users";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { UserDetailSheet } from "./user-detail-sheet";
 
 const roleLabels: Record<string, string> = {
@@ -60,14 +77,30 @@ const roleColors: Record<
 
 export function UsersTable() {
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 400);
+  const [role, setRole] = useState<string>("all");
+  const [isActive, setIsActive] = useState<string>("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userToBlock, setUserToBlock] = useState<string | null>(null);
   const [blockReason, setBlockReason] = useState("");
   const [userToUnblock, setUserToUnblock] = useState<string | null>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [deleteReason, setDeleteReason] = useState("");
 
-  const { data, isLoading } = useAdminUsers(page);
+  const { data, isLoading } = useAdminUsers({
+    page,
+    search: debouncedSearch || undefined,
+    role: role === "all" ? undefined : role,
+    isActive: isActive === "all" ? undefined : isActive === "true",
+    sortBy,
+    sortOrder,
+  });
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
+  const deleteUser = useDeleteUser();
 
   const users = data?.users ?? [];
   const pagination = data?.pagination;
@@ -99,6 +132,59 @@ export function UsersTable() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!userToDelete || deleteReason.trim().length < 10) return;
+
+    try {
+      await deleteUser.mutateAsync({
+        userId: userToDelete,
+        reason: deleteReason.trim(),
+      });
+      toast.success("Usuário excluído com sucesso");
+    } catch {
+      toast.error("Erro ao excluir usuário");
+    } finally {
+      setUserToDelete(null);
+      setDeleteReason("");
+    }
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    setPage(1);
+  };
+
+  const handleRoleChange = (value: string) => {
+    setRole(value);
+    setPage(1);
+  };
+
+  const handleIsActiveChange = (value: string) => {
+    setIsActive(value);
+    setPage(1);
+  };
+
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+    setPage(1);
+  };
+
+  const handleSortOrderChange = (value: "asc" | "desc") => {
+    setSortOrder(value);
+    setPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearchInput("");
+    setRole("all");
+    setIsActive("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const hasActiveFilters = searchInput || role !== "all" || isActive !== "all";
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -113,6 +199,70 @@ export function UsersTable() {
 
   return (
     <>
+      {/* Filters */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 items-center gap-2">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por email..."
+              value={searchInput}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={role} onValueChange={handleRoleChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Função" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="USER">Usuário</SelectItem>
+              <SelectItem value="ANALYST">Analista</SelectItem>
+              <SelectItem value="SUPPORT">Suporte</SelectItem>
+              <SelectItem value="MODERATOR">Moderador</SelectItem>
+              <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={isActive} onValueChange={handleIsActiveChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="true">Ativos</SelectItem>
+              <SelectItem value="false">Bloqueados</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortBy} onValueChange={handleSortByChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Ordenar por" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt">Data cadastro</SelectItem>
+              <SelectItem value="lastActivity">Última atividade</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() =>
+              handleSortOrderChange(sortOrder === "asc" ? "desc" : "asc")
+            }
+            title={`Ordem: ${sortOrder === "asc" ? "Crescente" : "Decrescente"}`}
+          >
+            {sortOrder === "asc" ? "↑" : "↓"}
+          </Button>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={resetFilters}>
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="rounded-lg border border-border-700 bg-surface-900">
         <Table>
           <TableHeader>
@@ -121,6 +271,7 @@ export function UsersTable() {
               <TableHead>Email</TableHead>
               <TableHead>Função</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Email Verificado</TableHead>
               <TableHead className="text-right">Itens</TableHead>
               <TableHead className="text-right">Empréstimos</TableHead>
               <TableHead className="w-[70px]" />
@@ -130,7 +281,7 @@ export function UsersTable() {
             {users.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="text-center text-muted-foreground py-8"
                 >
                   Nenhum usuário encontrado
@@ -177,6 +328,19 @@ export function UsersTable() {
                       </span>
                     )}
                   </TableCell>
+                  <TableCell>
+                    {user.emailVerified ? (
+                      <span className="flex items-center gap-1 text-sm text-accent-green">
+                        <MailCheck className="size-3" />
+                        Sim
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MailX className="size-3" />
+                        Não
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     {user.itemsCount}
                   </TableCell>
@@ -211,6 +375,13 @@ export function UsersTable() {
                             Bloquear
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem
+                          onClick={() => setUserToDelete(user.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 size-4" />
+                          Excluir
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -256,6 +427,9 @@ export function UsersTable() {
         onOpenChange={(open) => !open && setSelectedUserId(null)}
       >
         <SheetContent className="w-full sm:max-w-md border-border-700">
+          <SheetTitle className="sr-only" aria-hidden={!!selectedUserId}>
+            Detalhes do Usuário
+          </SheetTitle>
           {selectedUserId && (
             <UserDetailSheet
               userId={selectedUserId}
@@ -316,6 +490,41 @@ export function UsersTable() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={handleUnblock}>
               Desbloquear
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog
+        open={userToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUserToDelete(null);
+            setDeleteReason("");
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove o acesso do usuário de forma permanente e não
+              pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            placeholder="Motivo da exclusão (mínimo 10 caracteres)"
+            value={deleteReason}
+            onChange={(e) => setDeleteReason(e.target.value)}
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteReason.trim().length < 10}
+            >
+              Excluir usuário
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

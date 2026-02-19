@@ -14,8 +14,12 @@ type BetaProgramParams = {
 };
 
 export function useAdminBetaProgram(params: BetaProgramParams = {}) {
-  const { page = 1, limit = 20, sortBy = "betaAddedAt", sortOrder = "desc" } =
-    params;
+  const {
+    page = 1,
+    limit = 20,
+    sortBy = "betaAddedAt",
+    sortOrder = "desc",
+  } = params;
 
   return useQuery({
     queryKey: ["admin", "beta", { page, limit, sortBy, sortOrder }],
