@@ -2,11 +2,11 @@
 
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { clearTokens, setTokens } from "@/lib/api/client";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
@@ -56,7 +56,17 @@ export default function AuthCallbackPage() {
         // Salvar os tokens
         setTokens(accessToken, refreshToken);
 
+        const termsAccepted = searchParams.get("termsAccepted") === "true";
+
         setStatus("success");
+
+        // Se termos não aceitos (OAuth novo usuário), ir para tela de aceite
+        if (!termsAccepted) {
+          setTimeout(() => {
+            router.push("/accept-terms");
+          }, 500);
+          return;
+        }
 
         // Buscar a URL de retorno do sessionStorage (se existir)
         const returnUrl = sessionStorage.getItem("authReturnUrl");
@@ -115,5 +125,13 @@ export default function AuthCallbackPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense>
+      <AuthCallbackContent />
+    </Suspense>
   );
 }

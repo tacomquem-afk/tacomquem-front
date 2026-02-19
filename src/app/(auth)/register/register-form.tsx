@@ -12,6 +12,7 @@ import { SocialLoginButton } from "@/components/auth/social-login-button";
 import { FormError } from "@/components/forms/form-error";
 import { PasswordInput } from "@/components/forms/password-input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Divider } from "@/components/ui/divider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,6 +82,7 @@ export function RegisterForm() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -88,6 +90,7 @@ export function RegisterForm() {
       name: "",
       email: "",
       password: "",
+      acceptTerms: undefined,
     },
   });
 
@@ -118,10 +121,7 @@ export function RegisterForm() {
     setError(null);
 
     try {
-      const redirectToLogin = safeNextParam
-        ? `/login?registered=true&next=${encodeURIComponent(safeNextParam)}`
-        : "/login?registered=true";
-      await registerUser(data.name, data.email, data.password, redirectToLogin);
+      await registerUser(data.name, data.email, data.password);
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.error ?? "Erro ao criar conta. Tente novamente.");
@@ -220,6 +220,36 @@ export function RegisterForm() {
           {errors.password && <FormError message={errors.password.message} />}
         </div>
 
+        <div className="space-y-1">
+          <div className="flex items-start space-x-2">
+            <Checkbox
+              id="acceptTerms"
+              onCheckedChange={(checked) =>
+                setValue("acceptTerms", checked === true ? true : (undefined as unknown as true), {
+                  shouldValidate: true,
+                })
+              }
+              className="mt-0.5"
+            />
+            <Label
+              htmlFor="acceptTerms"
+              className="text-sm font-normal leading-snug cursor-pointer"
+            >
+              Li e concordo com os{" "}
+              <Link href="/terms" target="_blank" className="text-primary hover:underline">
+                Termos de Uso
+              </Link>{" "}
+              e a{" "}
+              <Link href="/privacy" target="_blank" className="text-primary hover:underline">
+                Política de Privacidade
+              </Link>
+            </Label>
+          </div>
+          {errors.acceptTerms && (
+            <FormError message={errors.acceptTerms.message} />
+          )}
+        </div>
+
         {error && <FormError message={error} />}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
@@ -238,13 +268,6 @@ export function RegisterForm() {
           </Link>
         </p>
       </form>
-
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        Ao criar conta, você concorda com os{" "}
-        <Link href="/terms" className="underline hover:text-foreground">
-          Termos de Uso
-        </Link>
-      </p>
     </AuthCard>
   );
 }

@@ -23,6 +23,9 @@ export const registerSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
       "Senha deve conter letra maiúscula, minúscula e número"
     ),
+  acceptTerms: z.literal(true, {
+    error: "Você deve aceitar os Termos de Uso e a Política de Privacidade",
+  }),
 });
 
 export const deleteAccountSchema = z.object({

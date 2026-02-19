@@ -12,6 +12,7 @@ export type User = {
   email: string;
   avatarUrl: string | null;
   emailVerified: boolean;
+  termsAccepted: boolean;
   role: UserRole;
 };
 
@@ -22,9 +23,22 @@ export type LoginResponse = {
   refreshToken: string;
 };
 
-export type RegisterResponse = {
-  message: string;
-  user: User;
+export type RegisterResponse =
+  | {
+      status: "registered";
+      user: User;
+      accessToken: string;
+      refreshToken: string;
+    }
+  | {
+      status: "pending_parental_consent";
+      emailSentTo: string;
+    };
+
+export type TermsInfo = {
+  version: string;
+  termsUrl: string;
+  privacyUrl: string;
 };
 
 // Item types

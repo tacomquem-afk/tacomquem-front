@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { AuthCard } from "@/components/auth/auth-card";
 import { FormError } from "@/components/forms/form-error";
 import { PasswordInput } from "@/components/forms/password-input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "@/lib/api/auth";
 import type { ApiError } from "@/lib/api/client";

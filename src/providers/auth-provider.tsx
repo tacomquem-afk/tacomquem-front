@@ -22,12 +22,7 @@ type AuthContextType = {
     password: string,
     redirectTo?: string
   ) => Promise<void>;
-  register: (
-    name: string,
-    email: string,
-    password: string,
-    redirectToLogin?: string
-  ) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 };
@@ -77,20 +72,27 @@ export function AuthProvider({
       const response = await apiLogin(email, password);
       setTokens(response.accessToken, response.refreshToken);
       setUser(response.user);
-      router.push(redirectTo);
+      if (!response.user.termsAccepted) {
+        router.push("/accept-terms");
+      } else {
+        router.push(redirectTo);
+      }
     },
     [router]
   );
 
   const register = useCallback(
-    async (
-      name: string,
-      email: string,
-      password: string,
-      redirectToLogin = "/login?registered=true"
-    ) => {
-      await apiRegister(name, email, password);
-      router.push(redirectToLogin);
+    async (name: string, email: string, password: string) => {
+      const response = await apiRegister(name, email, password);
+      if (response.status === "pending_parental_consent") {
+        router.push(
+          `/register/awaiting-parental-consent?email=${encodeURIComponent(response.emailSentTo)}`
+        );
+      } else {
+        setTokens(response.accessToken, response.refreshToken);
+        setUser(response.user);
+        router.push("/dashboard");
+      }
     },
     [router]
   );
