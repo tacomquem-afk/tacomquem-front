@@ -5,6 +5,7 @@ import {
   MailCheck,
   MailX,
   MoreHorizontal,
+  Search,
   ShieldBan,
   Trash2,
 } from "lucide-react";
@@ -30,6 +31,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   Table,
@@ -45,6 +53,7 @@ import {
   useDeleteUser,
   useUnblockUser,
 } from "@/hooks/use-admin-users";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { UserDetailSheet } from "./user-detail-sheet";
 
 const roleLabels: Record<string, string> = {
@@ -68,6 +77,12 @@ const roleColors: Record<
 
 export function UsersTable() {
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 400);
+  const [role, setRole] = useState<string>("all");
+  const [isActive, setIsActive] = useState<string>("all");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userToBlock, setUserToBlock] = useState<string | null>(null);
   const [blockReason, setBlockReason] = useState("");
@@ -75,7 +90,14 @@ export function UsersTable() {
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [deleteReason, setDeleteReason] = useState("");
 
-  const { data, isLoading } = useAdminUsers(page);
+  const { data, isLoading } = useAdminUsers({
+    page,
+    search: debouncedSearch || undefined,
+    role: role === "all" ? undefined : role,
+    isActive: isActive === "all" ? undefined : isActive === "true",
+    sortBy,
+    sortOrder,
+  });
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
   const deleteUser = useDeleteUser();
@@ -127,6 +149,42 @@ export function UsersTable() {
     }
   };
 
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    setPage(1);
+  };
+
+  const handleRoleChange = (value: string) => {
+    setRole(value);
+    setPage(1);
+  };
+
+  const handleIsActiveChange = (value: string) => {
+    setIsActive(value);
+    setPage(1);
+  };
+
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+    setPage(1);
+  };
+
+  const handleSortOrderChange = (value: "asc" | "desc") => {
+    setSortOrder(value);
+    setPage(1);
+  };
+
+  const resetFilters = () => {
+    setSearchInput("");
+    setRole("all");
+    setIsActive("all");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    setPage(1);
+  };
+
+  const hasActiveFilters = searchInput || role !== "all" || isActive !== "all";
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -141,6 +199,70 @@ export function UsersTable() {
 
   return (
     <>
+      {/* Filters */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 items-center gap-2">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por email..."
+              value={searchInput}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={role} onValueChange={handleRoleChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Função" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="USER">Usuário</SelectItem>
+              <SelectItem value="ANALYST">Analista</SelectItem>
+              <SelectItem value="SUPPORT">Suporte</SelectItem>
+              <SelectItem value="MODERATOR">Moderador</SelectItem>
+              <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={isActive} onValueChange={handleIsActiveChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="true">Ativos</SelectItem>
+              <SelectItem value="false">Bloqueados</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortBy} onValueChange={handleSortByChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Ordenar por" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt">Data cadastro</SelectItem>
+              <SelectItem value="lastActivity">Última atividade</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() =>
+              handleSortOrderChange(sortOrder === "asc" ? "desc" : "asc")
+            }
+            title={`Ordem: ${sortOrder === "asc" ? "Crescente" : "Decrescente"}`}
+          >
+            {sortOrder === "asc" ? "↑" : "↓"}
+          </Button>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={resetFilters}>
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="rounded-lg border border-border-700 bg-surface-900">
         <Table>
           <TableHeader>
