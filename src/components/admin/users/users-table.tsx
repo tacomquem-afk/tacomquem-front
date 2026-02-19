@@ -78,7 +78,7 @@ const roleColors: Record<
 export function UsersTable() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const debouncedSearch = useDebouncedValue(searchInput, 400);
+  const debouncedSearch = useDebouncedValue(searchInput, 800);
   const [role, setRole] = useState<string>("all");
   const [isActive, setIsActive] = useState<string>("all");
   const [sortBy, setSortBy] = useState("createdAt");

@@ -33,9 +33,9 @@ function AuthCallbackContent() {
         setErrorMessage(errorMessages[error] ?? "Erro na autenticação.");
         setStatus("error");
 
-        // Redirecionar para login após 3 segundos
+        // Redirecionar para login após 3 segundos (usando window.location para garantir que os parâmetros sejam preservados)
         setTimeout(() => {
-          router.push(`/login?error=${error}`);
+          window.location.href = `/login?error=${error}`;
         }, 3000);
         return;
       }
@@ -45,9 +45,9 @@ function AuthCallbackContent() {
         setErrorMessage("Tokens não encontrados na resposta.");
         setStatus("error");
 
-        // Redirecionar para login após 3 segundos
+        // Redirecionar para login após 3 segundos (usando window.location para garantir que os parâmetros sejam preservados)
         setTimeout(() => {
-          router.push("/login?error=missing_tokens");
+          window.location.href = "/login?error=missing_tokens";
         }, 3000);
         return;
       }
@@ -83,7 +83,7 @@ function AuthCallbackContent() {
         setStatus("error");
 
         setTimeout(() => {
-          router.push("/login?error=oauth_failed");
+          window.location.href = "/login?error=oauth_failed";
         }, 3000);
       }
     };
