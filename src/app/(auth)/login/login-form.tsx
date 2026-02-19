@@ -30,6 +30,7 @@ export function LoginForm() {
   const [isBetaRejected, setIsBetaRejected] = useState(false);
 
   const registered = searchParams.get("registered") === "true";
+  const passwordReset = searchParams.get("passwordReset") === "true";
   const errorParam = searchParams.get("error");
   const nextParam = searchParams.get("next");
   const safeNextParam = nextParam?.startsWith("/") ? nextParam : null;
@@ -130,6 +131,14 @@ export function LoginForm() {
           role="alert"
         >
           Conta criada com sucesso! Faça login para continuar.
+        </div>
+      )}
+      {passwordReset && (
+        <div
+          className="mb-4 rounded-md bg-green-500/10 border border-green-500/20 p-3 text-sm text-green-500"
+          role="alert"
+        >
+          Senha redefinida com sucesso! Faça login com a nova senha.
         </div>
       )}
       {publicLoanInfo && (
