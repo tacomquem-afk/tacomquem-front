@@ -52,3 +52,7 @@ export async function resetPassword(
 export async function verifyEmail(token: string): Promise<void> {
   await api.post("/api/auth/verify-email", { token }, { skipAuth: true });
 }
+
+export async function deleteAccount(password: string): Promise<void> {
+  await api.request("/api/auth/me", { method: "DELETE", body: { password } });
+}

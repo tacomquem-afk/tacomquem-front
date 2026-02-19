@@ -125,7 +125,9 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
         </div>
         <div className="p-4 rounded-xl bg-surface-800 border border-border-700">
           <Package className="size-5 text-muted-foreground mb-2" />
-          <p className="text-2xl font-bold">{user.lentLoans.length + user.borrowedLoans.length}</p>
+          <p className="text-2xl font-bold">
+            {user.lentLoans.length + user.borrowedLoans.length}
+          </p>
           <p className="text-xs text-muted-foreground">Empréstimos</p>
         </div>
       </div>

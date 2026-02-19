@@ -1,6 +1,10 @@
 "use client";
 
-import { LogOut, Mail, User } from "lucide-react";
+import { LogOut, Mail, Trash2, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { DeleteAccountDialog } from "@/components/dashboard/delete-account-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,9 +12,17 @@ import { useAuth } from "@/providers/auth-provider";
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
+  const router = useRouter();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleDeleteSuccess = () => {
+    setDeleteDialogOpen(false);
+    logout();
+    router.push("/login");
   };
 
   return (
@@ -60,17 +72,33 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Logout Button */}
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={handleLogout}
-          >
-            <LogOut className="size-4 mr-2" />
-            Sair da Conta
-          </Button>
+          {/* Actions */}
+          <div className="space-y-2">
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={handleLogout}
+            >
+              <LogOut className="size-4 mr-2" />
+              Sair da Conta
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              <Trash2 className="size-4 mr-2" />
+              Excluir minha conta
+            </Button>
+          </div>
         </CardContent>
       </Card>
+
+      <DeleteAccountDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onSuccess={handleDeleteSuccess}
+      />
     </div>
   );
 }

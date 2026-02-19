@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type {
-  AdminUserDetailResponse,
-  AdminUsersResponse,
-} from "@/types";
+import type { AdminUserDetailResponse, AdminUsersResponse } from "@/types";
 
 export function useAdminUsers(page = 1) {
   return useQuery({

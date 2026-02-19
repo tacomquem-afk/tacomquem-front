@@ -25,5 +25,10 @@ export const registerSchema = z.object({
     ),
 });
 
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, "Senha é obrigatória"),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
