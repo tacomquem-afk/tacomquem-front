@@ -1,6 +1,13 @@
 "use client";
 
-import { BadgeCheck, MoreHorizontal, ShieldBan, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  MailCheck,
+  MailX,
+  MoreHorizontal,
+  ShieldBan,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -142,6 +149,7 @@ export function UsersTable() {
               <TableHead>Email</TableHead>
               <TableHead>Função</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Email Verificado</TableHead>
               <TableHead className="text-right">Itens</TableHead>
               <TableHead className="text-right">Empréstimos</TableHead>
               <TableHead className="w-[70px]" />
@@ -151,7 +159,7 @@ export function UsersTable() {
             {users.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="text-center text-muted-foreground py-8"
                 >
                   Nenhum usuário encontrado
@@ -195,6 +203,19 @@ export function UsersTable() {
                       <span className="flex items-center gap-1 text-sm text-accent-green">
                         <BadgeCheck className="size-3" />
                         Ativo
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {user.emailVerified ? (
+                      <span className="flex items-center gap-1 text-sm text-accent-green">
+                        <MailCheck className="size-3" />
+                        Sim
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MailX className="size-3" />
+                        Não
                       </span>
                     )}
                   </TableCell>
