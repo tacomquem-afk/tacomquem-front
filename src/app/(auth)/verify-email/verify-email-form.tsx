@@ -1,8 +1,8 @@
 "use client";
 
-import { AlertCircle, CheckCircle2, Loader2, MailCheck } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { AuthCard } from "@/components/auth/auth-card";
@@ -12,7 +12,6 @@ import type { ApiError } from "@/lib/api/client";
 
 export function VerifyEmailForm() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const token = searchParams.get("token");
 
   const [isLoading, setIsLoading] = useState(true);
