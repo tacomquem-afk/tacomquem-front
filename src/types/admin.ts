@@ -166,6 +166,24 @@ export type UpdateAdminRoleInput = {
 
 export type BetaAccessTier = "PUBLIC" | "BETA" | "ARCHIVED";
 
+export type BetaInvite = {
+  email: string;
+  reason: string | null;
+  addedAt: string;
+  usedAt: string | null;
+  addedBy: {
+    id: string;
+    name: string;
+  };
+};
+
+export type BetaInvitesResponse = {
+  invites: BetaInvite[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
 export type BetaUser = {
   id: string;
   email: string;

@@ -6,14 +6,17 @@ import { useState } from "react";
 import { NotificationsDropdown } from "@/components/dashboard/notifications-dropdown";
 import { RegisterLoanDialog } from "@/components/dashboard/register-loan-dialog";
 import { DashboardMobileMenu } from "@/components/layouts/dashboard-mobile-menu";
+import { BetaBadge } from "@/components/shared/beta-badge";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useDashboardSearch } from "@/hooks/use-dashboard-search";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useAuth } from "@/providers/auth-provider";
 
 export function DashboardHeader() {
+  const { user } = useAuth();
   const [registerLoanOpen, setRegisterLoanOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
@@ -151,6 +154,8 @@ export function DashboardHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 sm:gap-4">
+          <BetaBadge user={user} />
+
           {/* Notifications */}
           <NotificationsDropdown />
 

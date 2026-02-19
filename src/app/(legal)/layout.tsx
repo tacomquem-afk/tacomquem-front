@@ -11,7 +11,7 @@ export default function LegalLayout({
       <header className="border-b border-border/50">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <Link href="/">
-            <Logo size="sm" />
+            <Logo size="sm" linkToHome={false} />
           </Link>
           <nav className="flex gap-4 text-sm text-muted-foreground">
             <Link href="/terms" className="hover:text-foreground transition-colors">

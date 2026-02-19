@@ -71,14 +71,15 @@ export function AuthProvider({
     async (email: string, password: string, redirectTo = "/dashboard") => {
       const response = await apiLogin(email, password);
       setTokens(response.accessToken, response.refreshToken);
-      setUser(response.user);
       if (!response.user.termsAccepted) {
+        setUser(response.user);
         router.push("/accept-terms");
       } else {
+        await refreshUser();
         router.push(redirectTo);
       }
     },
-    [router]
+    [router, refreshUser]
   );
 
   const register = useCallback(
@@ -90,11 +91,11 @@ export function AuthProvider({
         );
       } else {
         setTokens(response.accessToken, response.refreshToken);
-        setUser(response.user);
+        await refreshUser();
         router.push("/dashboard");
       }
     },
-    [router]
+    [router, refreshUser]
   );
 
   const logout = useCallback(() => {

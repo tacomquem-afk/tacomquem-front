@@ -6,6 +6,8 @@ export type UserRole =
   | "MODERATOR"
   | "SUPER_ADMIN";
 
+export type AccessTier = "PUBLIC" | "BETA" | "ARCHIVED";
+
 export type User = {
   id: string;
   name: string;
@@ -14,6 +16,8 @@ export type User = {
   emailVerified: boolean;
   termsAccepted: boolean;
   role: UserRole;
+  accessTier: AccessTier;
+  betaAddedAt: string | null;
 };
 
 // Auth types
