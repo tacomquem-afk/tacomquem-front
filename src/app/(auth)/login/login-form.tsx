@@ -68,8 +68,22 @@ export function LoginForm() {
   }, [confirmToken]);
 
   useEffect(() => {
-    if (errorParam === "beta_not_available") {
-      setIsBetaRejected(true);
+    const errorMessages: Record<string, string> = {
+      oauth_denied: "Você cancelou a autorização com Google.",
+      no_code: "Erro na comunicação com Google. Tente novamente.",
+      oauth_failed: "Erro ao fazer login com Google. Tente novamente.",
+      beta_not_available:
+        "Desculpe, o acesso à plataforma é exclusivo para beta testers.",
+      missing_tokens: "Erro na autenticação. Tente novamente.",
+      session_expired: "Sua sessão expirou. Faça login novamente.",
+    };
+
+    if (errorParam && errorMessages[errorParam]) {
+      if (errorParam === "beta_not_available") {
+        setIsBetaRejected(true);
+      } else {
+        setError(errorMessages[errorParam]);
+      }
     }
   }, [errorParam]);
 

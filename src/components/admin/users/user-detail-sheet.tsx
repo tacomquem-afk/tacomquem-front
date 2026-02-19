@@ -8,11 +8,12 @@ import {
   ShieldBan,
   User,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   SheetDescription,
   SheetHeader,
@@ -50,11 +51,10 @@ type UserDetailSheetProps = {
 };
 
 export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
-  const { data, isLoading } = useAdminUser(userId);
+  const { data: user, isLoading } = useAdminUser(userId);
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
-
-  const user = data?.user;
+  const [blockReason, setBlockReason] = useState("");
 
   useEffect(() => {
     if (blockUser.isSuccess) {
@@ -101,7 +101,6 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
       {/* User Profile */}
       <div className="flex flex-col items-center text-center space-y-4">
         <Avatar className="size-20">
-          <AvatarImage src={user.avatarUrl ?? undefined} />
           <AvatarFallback className="text-xl">
             {user.name
               .split(" ")
@@ -121,12 +120,12 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 rounded-xl bg-surface-800 border border-border-700">
           <Package className="size-5 text-muted-foreground mb-2" />
-          <p className="text-2xl font-bold">{user.itemsCount}</p>
+          <p className="text-2xl font-bold">{user.items.length}</p>
           <p className="text-xs text-muted-foreground">Itens cadastrados</p>
         </div>
         <div className="p-4 rounded-xl bg-surface-800 border border-border-700">
           <Package className="size-5 text-muted-foreground mb-2" />
-          <p className="text-2xl font-bold">{user.loansCount}</p>
+          <p className="text-2xl font-bold">{user.lentLoans.length + user.borrowedLoans.length}</p>
           <p className="text-xs text-muted-foreground">Empréstimos</p>
         </div>
       </div>
@@ -153,7 +152,7 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            {user.isBlocked ? (
+            {!user.isActive ? (
               <>
                 <ShieldBan className="size-4 text-destructive" />
                 <span className="text-sm text-destructive">
@@ -171,8 +170,8 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
       </div>
 
       {/* Actions */}
-      <div className="pt-4 border-t border-border-700">
-        {user.isBlocked ? (
+      <div className="pt-4 border-t border-border-700 space-y-3">
+        {!user.isActive ? (
           <Button
             variant="outline"
             className="w-full text-accent-green hover:text-accent-green"
@@ -182,14 +181,23 @@ export function UserDetailSheet({ userId, onClose }: UserDetailSheetProps) {
             Desbloquear Usuário
           </Button>
         ) : (
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={() => blockUser.mutate(user.id)}
-            disabled={blockUser.isPending}
-          >
-            Bloquear Usuário
-          </Button>
+          <>
+            <Input
+              placeholder="Motivo do bloqueio (mínimo 10 caracteres)"
+              value={blockReason}
+              onChange={(e) => setBlockReason(e.target.value)}
+            />
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={() =>
+                blockUser.mutate({ userId: user.id, reason: blockReason })
+              }
+              disabled={blockUser.isPending || blockReason.length < 10}
+            >
+              Bloquear Usuário
+            </Button>
+          </>
         )}
       </div>
     </div>

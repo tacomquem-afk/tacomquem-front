@@ -60,6 +60,23 @@ export function RegisterForm() {
     };
   }, [confirmToken]);
 
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    const errorMessages: Record<string, string> = {
+      oauth_denied: "Você cancelou a autorização com Google.",
+      no_code: "Erro na comunicação com Google. Tente novamente.",
+      oauth_failed: "Erro ao fazer login com Google. Tente novamente.",
+      beta_not_available:
+        "Desculpe, o acesso à plataforma é exclusivo para beta testers.",
+      missing_tokens: "Erro na autenticação. Tente novamente.",
+      session_expired: "Sua sessão expirou. Faça login novamente.",
+    };
+
+    if (errorParam && errorMessages[errorParam]) {
+      setError(errorMessages[errorParam]);
+    }
+  }, [searchParams]);
+
   const {
     register,
     handleSubmit,

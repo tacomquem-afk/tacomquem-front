@@ -33,14 +33,14 @@ export type AdminUser = {
   id: string;
   name: string;
   email: string;
-  avatarUrl: string | null;
   role: UserRole;
   emailVerified: boolean;
-  isBlocked: boolean;
+  isActive: boolean;
   createdAt: string;
-  updatedAt: string;
+  lastActivityAt?: string;
   itemsCount: number;
-  loansCount: number;
+  loansAsLender: number;
+  loansAsBorrower: number;
 };
 
 export type AdminUsersResponse = {
@@ -48,13 +48,55 @@ export type AdminUsersResponse = {
   pagination: AdminPagination;
 };
 
-export type AdminUserDetailResponse = {
-  user: AdminUser;
+export type AdminLoanDetail = {
+  id: string;
+  item: { id: string; name: string; images: string[] };
+  lender: { id: string; name: string };
+  borrower: { id: string; name: string } | null;
+  borrowerEmail: string | null;
+  status: "pending" | "confirmed" | "returned" | "cancelled";
+  expectedReturnDate: string | null;
+  lenderNotes: string | null;
+  borrowerNotes: string | null;
+  confirmedAt: string | null;
+  returnedAt: string | null;
+  createdAt: string;
 };
 
-export type AdminBlockUserResponse = {
+export type AdminItemDetail = {
   id: string;
-  isBlocked: boolean;
+  name: string;
+  description: string | null;
+  images: string[];
+  isActive: boolean;
+  isLoaned: boolean;
+  currentLoanId: string | null;
+  borrowedTo: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminUserDetail = {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  emailVerified: boolean;
+  isActive: boolean;
+  blockedAt: string | null;
+  blockedReason: string | null;
+  lentLoans: AdminLoanDetail[];
+  borrowedLoans: AdminLoanDetail[];
+  items: AdminItemDetail[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminUserDetailResponse = AdminUserDetail;
+
+export type AdminBlockUserResponse = {
+  success: boolean;
+  message: string;
 };
 
 // ── Moderation ────────────────────────────────────────────

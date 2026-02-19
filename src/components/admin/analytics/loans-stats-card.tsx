@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  ArrowUturnLeft,
+  RotateCcw,
   Calendar,
   CalendarClock,
   Timer,
@@ -70,7 +70,7 @@ export function LoansStatsCard() {
         </div>
         <div className="mt-4 pt-4 border-t border-border-700">
           <StatCard
-            icon={ArrowUturnLeft}
+            icon={RotateCcw}
             label="Taxa de Devolução"
             value={parseFloat(returnRateFormatted)}
             trend={returnRateFormatted}

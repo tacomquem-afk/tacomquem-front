@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
-import type { AdminUserDetailResponse, AdminUsersResponse } from "@/types";
+import type {
+  AdminUserDetailResponse,
+  AdminUsersResponse,
+} from "@/types";
 
 export function useAdminUsers(page = 1) {
   return useQuery({
@@ -22,8 +25,8 @@ export function useAdminUser(id: string) {
 export function useBlockUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (userId: string) =>
-      api.post(`/api/admin/users/${userId}/block`),
+    mutationFn: ({ userId, reason }: { userId: string; reason: string }) =>
+      api.post(`/api/admin/users/${userId}/block`, { reason }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     },

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -42,10 +43,16 @@ export function SocialLoginButton({
   isLoading,
   className,
 }: SocialLoginButtonProps) {
+  const searchParams = useSearchParams();
   const config = providerConfig[provider];
 
   const handleClick = () => {
-    // TODO: Implementar OAuth flow
+    // Preservar URL de retorno se existir
+    const nextParam = searchParams.get("next");
+    if (nextParam?.startsWith("/")) {
+      sessionStorage.setItem("authReturnUrl", nextParam);
+    }
+
     const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5173";
     window.location.href = `${apiUrl}/api/auth/google`;
   };

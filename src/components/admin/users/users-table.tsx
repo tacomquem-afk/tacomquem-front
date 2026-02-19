@@ -13,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   Table,
@@ -61,6 +62,7 @@ export function UsersTable() {
   const [page, setPage] = useState(1);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userToBlock, setUserToBlock] = useState<string | null>(null);
+  const [blockReason, setBlockReason] = useState("");
   const [userToUnblock, setUserToUnblock] = useState<string | null>(null);
 
   const { data, isLoading } = useAdminUsers(page);
@@ -71,15 +73,16 @@ export function UsersTable() {
   const pagination = data?.pagination;
 
   const handleBlock = async () => {
-    if (!userToBlock) return;
+    if (!userToBlock || blockReason.length < 10) return;
 
     try {
-      await blockUser.mutateAsync(userToBlock);
+      await blockUser.mutateAsync({ userId: userToBlock, reason: blockReason });
       toast.success("Usuário bloqueado com sucesso");
     } catch {
       toast.error("Erro ao bloquear usuário");
     } finally {
       setUserToBlock(null);
+      setBlockReason("");
     }
   };
 
@@ -143,7 +146,6 @@ export function UsersTable() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="size-8">
-                        <AvatarImage src={user.avatarUrl ?? undefined} />
                         <AvatarFallback>
                           {user.name
                             .split(" ")
@@ -163,7 +165,7 @@ export function UsersTable() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {user.isBlocked ? (
+                    {!user.isActive ? (
                       <span className="flex items-center gap-1 text-sm text-destructive">
                         <ShieldBan className="size-3" />
                         Bloqueado
@@ -179,7 +181,7 @@ export function UsersTable() {
                     {user.itemsCount}
                   </TableCell>
                   <TableCell className="text-right">
-                    {user.loansCount}
+                    {user.loansAsLender + user.loansAsBorrower}
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
@@ -194,7 +196,7 @@ export function UsersTable() {
                         >
                           Ver Detalhes
                         </DropdownMenuItem>
-                        {user.isBlocked ? (
+                        {!user.isActive ? (
                           <DropdownMenuItem
                             onClick={() => setUserToUnblock(user.id)}
                             className="text-accent-green focus:text-accent-green"
@@ -266,7 +268,12 @@ export function UsersTable() {
       {/* Block Confirmation */}
       <AlertDialog
         open={userToBlock !== null}
-        onOpenChange={(open) => !open && setUserToBlock(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setUserToBlock(null);
+            setBlockReason("");
+          }
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -276,9 +283,17 @@ export function UsersTable() {
               acessar a plataforma.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <Input
+            placeholder="Motivo do bloqueio (mínimo 10 caracteres)"
+            value={blockReason}
+            onChange={(e) => setBlockReason(e.target.value)}
+          />
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleBlock}>
+            <AlertDialogAction
+              onClick={handleBlock}
+              disabled={blockReason.length < 10}
+            >
               Bloquear
             </AlertDialogAction>
           </AlertDialogFooter>
