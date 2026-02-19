@@ -45,7 +45,7 @@ export function ChangeRoleDialog({
   const { data } = useAdminAccounts();
   const updateRole = useUpdateAdminRole();
 
-  const admin = data?.admins.find((a) => a.id === adminId);
+  const admin = data?.find((a) => a.id === adminId);
 
   useEffect(() => {
     if (admin) {

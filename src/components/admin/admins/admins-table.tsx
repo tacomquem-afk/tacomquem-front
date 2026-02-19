@@ -61,7 +61,7 @@ export function AdminsTable() {
   const { data, isLoading } = useAdminAccounts();
   const deleteAdmin = useDeleteAdmin();
 
-  const admins = data?.admins ?? [];
+  const admins = data ?? [];
 
   const handleDelete = async () => {
     if (!adminToDelete) return;

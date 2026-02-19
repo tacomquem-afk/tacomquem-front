@@ -1,4 +1,9 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333";
+// Server-side: call the backend directly using the private env var.
+// Client-side: call the backend directly using the public env var.
+const API_URL =
+  typeof window === "undefined"
+    ? (process.env.API_URL ?? "http://localhost:3333")
+    : (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333");
 
 type RequestConfig = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";

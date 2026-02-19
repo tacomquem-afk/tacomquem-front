@@ -11,6 +11,7 @@ export function useAdminAccounts() {
   return useQuery({
     queryKey: ["admin", "admins"],
     queryFn: () => api.get<AdminAccountsResponse>("/api/admin/admins/"),
+    select: (data) => (Array.isArray(data) ? data : []),
     staleTime: 30 * 1000,
   });
 }

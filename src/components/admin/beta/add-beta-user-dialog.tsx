@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useAddBetaUser } from "@/hooks/use-admin-beta";
 import type { AddBetaUserFormData } from "@/lib/validations/admin";
 import { addBetaUserSchema } from "@/lib/validations/admin";
@@ -27,6 +28,7 @@ export function AddBetaUserDialog({
   onOpenChange,
 }: AddBetaUserDialogProps) {
   const [email, setEmail] = useState("");
+  const [reason, setReason] = useState("");
   const [errors, setErrors] = useState<
     Partial<Record<keyof AddBetaUserFormData, string>>
   >({});
@@ -34,17 +36,16 @@ export function AddBetaUserDialog({
   const addBetaUser = useAddBetaUser();
 
   const handleSubmit = async () => {
-    // Reset errors
     setErrors({});
 
-    // Validate
     const result = addBetaUserSchema.safeParse({ email });
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof AddBetaUserFormData, string>> =
         {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0] as keyof AddBetaUserFormData] = err.message;
+      result.error.issues.forEach((issue) => {
+        if (issue.path[0]) {
+          fieldErrors[issue.path[0] as keyof AddBetaUserFormData] =
+            issue.message;
         }
       });
       setErrors(fieldErrors);
@@ -52,10 +53,12 @@ export function AddBetaUserDialog({
     }
 
     try {
-      await addBetaUser.mutateAsync({ email });
+      await addBetaUser.mutateAsync({
+        email,
+        ...(reason.trim() ? { reason: reason.trim() } : {}),
+      });
       toast.success("Usuário adicionado ao programa beta");
-      setEmail("");
-      onOpenChange(false);
+      handleClose();
     } catch {
       toast.error("Erro ao adicionar usuário ao programa beta");
     }
@@ -63,6 +66,7 @@ export function AddBetaUserDialog({
 
   const handleClose = () => {
     setEmail("");
+    setReason("");
     setErrors({});
     onOpenChange(false);
   };
@@ -90,6 +94,17 @@ export function AddBetaUserDialog({
             {errors.email && (
               <p className="text-sm text-destructive">{errors.email}</p>
             )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="reason">Motivo (opcional)</Label>
+            <Textarea
+              id="reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Descreva o motivo da inclusão no beta..."
+              className="border-border-700 resize-none"
+              rows={3}
+            />
           </div>
         </div>
         <div className="flex justify-end gap-2">

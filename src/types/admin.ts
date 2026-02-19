@@ -130,23 +130,21 @@ export type AdminAccount = {
   id: string;
   name: string;
   email: string;
-  avatarUrl: string | null;
+  avatarUrl?: string | null;
   role: AdminRole;
   createdAt: string;
 };
 
-export type AdminAccountsResponse = {
-  admins: AdminAccount[];
-};
+export type AdminAccountsResponse = AdminAccount[];
 
 export type AdminAuditLogEntry = {
   id: string;
-  adminId: string;
-  adminName: string;
+  admin: { id: string; name: string; role: AdminRole };
   action: string;
-  targetId: string | null;
-  targetType: string | null;
-  details: Record<string, unknown>;
+  targetId?: string | null;
+  targetType?: string | null;
+  metadata?: Record<string, unknown>;
+  ipAddress?: string;
   createdAt: string;
 };
 
@@ -166,22 +164,30 @@ export type UpdateAdminRoleInput = {
 
 // ── Beta Program ──────────────────────────────────────────
 
+export type BetaAccessTier = "PUBLIC" | "BETA" | "ARCHIVED";
+
 export type BetaUser = {
   id: string;
-  userId: string;
-  name: string;
   email: string;
-  avatarUrl: string | null;
-  addedAt: string;
+  name: string;
+  accessTier: BetaAccessTier;
+  betaAddedAt: string | null;
+  emailVerified: boolean;
+  createdAt: string;
 };
 
 export type BetaProgramResponse = {
   users: BetaUser[];
-  total: number;
+  pagination: AdminPagination;
 };
 
 export type AddBetaUserInput = {
   email: string;
+  reason?: string;
+};
+
+export type RemoveBetaUserInput = {
+  reason?: string;
 };
 
 // ── Shared ────────────────────────────────────────────────

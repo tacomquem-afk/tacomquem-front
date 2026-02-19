@@ -60,7 +60,7 @@ export function AuditLogTable() {
                   key={log.id}
                   className="border-border-700 hover:bg-surface-800"
                 >
-                  <TableCell className="font-medium">{log.adminName}</TableCell>
+                  <TableCell className="font-medium">{log.admin.name}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{log.action}</Badge>
                   </TableCell>
