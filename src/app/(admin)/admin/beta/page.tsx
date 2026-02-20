@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BetaInvitesList } from "@/components/admin/beta/beta-invites-list";
 import { BetaUsersTable } from "@/components/admin/beta/beta-users-table";
+import { BetaWaitlistTable } from "@/components/admin/beta/beta-waitlist-table";
 import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = { title: "Admin – Programa Beta" };
@@ -25,6 +26,20 @@ export default function BetaPage() {
           </p>
         </div>
         <BetaInvitesList />
+      </section>
+
+      <Separator className="border-border-700" />
+
+      {/* Waitlist de auto-cadastro */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Waitlist (Auto-cadastro)</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Usuarios que se cadastraram durante o modo beta e aguardam
+            aprovacao.
+          </p>
+        </div>
+        <BetaWaitlistTable />
       </section>
 
       <Separator className="border-border-700" />
