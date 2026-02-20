@@ -38,10 +38,14 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
+    const apiUrl = process.env.API_URL || "http://localhost:3333";
+    const destination = apiUrl.startsWith("http")
+      ? apiUrl
+      : `https://${apiUrl}`;
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.API_URL}/api/:path*`,
+        destination: `${destination}/api/:path*`,
       },
     ];
   },

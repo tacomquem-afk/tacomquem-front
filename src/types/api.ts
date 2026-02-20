@@ -37,6 +37,12 @@ export type RegisterResponse =
   | {
       status: "pending_parental_consent";
       emailSentTo: string;
+    }
+  | {
+      status: "success";
+      message: string;
+      user: Pick<User, "id" | "name" | "email" | "avatarUrl" | "emailVerified" | "role" | "termsAccepted">;
+      canUseApp: false;
     };
 
 export type TermsInfo = {
