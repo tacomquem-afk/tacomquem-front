@@ -89,6 +89,10 @@ export function AuthProvider({
         router.push(
           `/register/awaiting-parental-consent?email=${encodeURIComponent(response.emailSentTo)}`
         );
+      } else if (response.status === "success") {
+        router.push(
+          `/register/waiting-list?name=${encodeURIComponent(response.user.name)}`
+        );
       } else {
         setTokens(response.accessToken, response.refreshToken);
         await refreshUser();

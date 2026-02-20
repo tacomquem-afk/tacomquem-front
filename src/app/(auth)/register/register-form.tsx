@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -22,8 +22,9 @@ import { useAuth } from "@/providers/auth-provider";
 import type { PublicLoanInfo } from "@/types";
 
 export function RegisterForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const nextParam = searchParams.get("next");
@@ -39,6 +40,13 @@ export function RegisterForm() {
   const [publicLoanInfo, setPublicLoanInfo] = useState<PublicLoanInfo | null>(
     null
   );
+
+  // Redirect authenticated users away from register page
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push(safeNextParam ?? "/dashboard");
+    }
+  }, [authLoading, isAuthenticated, safeNextParam, router]);
 
   useEffect(() => {
     if (!confirmToken) {

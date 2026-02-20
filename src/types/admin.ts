@@ -204,6 +204,21 @@ export type BetaProgramResponse = {
   pagination: AdminPagination;
 };
 
+export type BetaWaitlistUser = {
+  id: string;
+  email: string;
+  name: string;
+  accessTier: BetaAccessTier;
+  betaWaitlistedAt: string;
+  emailVerified: boolean;
+  createdAt: string;
+};
+
+export type BetaWaitlistResponse = {
+  users: BetaWaitlistUser[];
+  pagination: AdminPagination;
+};
+
 export type AddBetaUserInput = {
   email: string;
   reason?: string;

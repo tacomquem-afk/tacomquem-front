@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, Mail } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -23,8 +23,9 @@ import { useAuth } from "@/providers/auth-provider";
 import type { PublicLoanInfo } from "@/types";
 
 export function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isBetaRejected, setIsBetaRejected] = useState(false);
@@ -38,6 +39,13 @@ export function LoginForm() {
   const registerHref = safeNextParam
     ? `/register?next=${encodeURIComponent(safeNextParam)}`
     : "/register";
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push(safeNextParam ?? "/dashboard");
+    }
+  }, [authLoading, isAuthenticated, safeNextParam, router]);
   const confirmToken = useMemo(() => {
     if (!safeNextParam?.startsWith("/confirm-loan/")) return null;
     const token = safeNextParam.slice("/confirm-loan/".length).split("?")[0];

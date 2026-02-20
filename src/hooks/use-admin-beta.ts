@@ -38,6 +38,7 @@ export function useAddBetaUser() {
       api.post("/api/admin/beta-program/add-user", input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "beta"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "beta-waitlist"] });
     },
   });
 }

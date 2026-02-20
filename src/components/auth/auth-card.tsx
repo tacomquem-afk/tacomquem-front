@@ -17,7 +17,7 @@ export function AuthCard({
 }: AuthCardProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="mb-8">
+      <div className="mb-4 sm:mb-8">
         <Logo size="lg" />
       </div>
 
