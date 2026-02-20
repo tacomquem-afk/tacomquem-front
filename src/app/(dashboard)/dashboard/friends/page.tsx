@@ -39,7 +39,7 @@ export default function FriendsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold mb-2">Amigos</h1>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold mb-2">Amigos</h1>
           <p className="text-muted-foreground">
             Pessoas com quem você já compartilhou itens.
           </p>

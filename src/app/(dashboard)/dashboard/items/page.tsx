@@ -59,14 +59,14 @@ export default function ItemsPage() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-display font-bold mb-2">Meus Itens</h1>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold mb-2">Meus Itens</h1>
           <p className="text-muted-foreground">
             Gerencie os itens que você cadastrou para empréstimo.
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setCreateDialogOpen(true)}>
+        <Button className="gap-2 shrink-0 self-start" onClick={() => setCreateDialogOpen(true)}>
           <Plus className="size-4" />
           Novo Item
         </Button>

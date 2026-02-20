@@ -225,7 +225,7 @@ export default function HistoryPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold mb-2">Histórico</h1>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold mb-2">Histórico</h1>
           <p className="text-muted-foreground">
             Todos os empréstimos já concluídos.
           </p>

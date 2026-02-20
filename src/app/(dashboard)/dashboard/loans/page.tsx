@@ -24,7 +24,7 @@ export default function LoansPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-display font-bold mb-2">
+        <h1 className="text-2xl sm:text-3xl font-display font-bold mb-2">
           Todos os Empréstimos Ativos
         </h1>
         <p className="text-muted-foreground">

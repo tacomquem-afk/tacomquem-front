@@ -183,7 +183,7 @@ export default function NotificationsPage() {
     <div className="space-y-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-display font-bold">Notificações</h1>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold">Notificações</h1>
           <p className="text-muted-foreground">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-800 border border-border-700 text-sm">
