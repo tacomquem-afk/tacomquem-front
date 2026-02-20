@@ -26,8 +26,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold font-display mb-6">Configurações</h1>
+    <div className="space-y-8">
+      <h1 className="text-2xl sm:text-3xl font-bold font-display">Configurações</h1>
 
       <Card className="max-w-md">
         <CardHeader>
